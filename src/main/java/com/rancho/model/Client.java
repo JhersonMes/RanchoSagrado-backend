@@ -20,12 +20,12 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include // Identidad única
     private Integer idClient;
-    @Column(nullable = false, length = 8)//")
+    @Column(nullable = false, length = 8)
     private Integer dni;
     @Column(nullable = false, length = 70)//name="nombre")
     private String name;
-    @Column(nullable = false, length = 30)//name="nombre")
+    @Column(nullable = false, length = 30)
     private String email;
-    @Column(nullable = false, length = 10)//name="nombre")
+    @Column(nullable = false, length = 10)
     private Integer numb;
 }
