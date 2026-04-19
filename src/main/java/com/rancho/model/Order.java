@@ -35,7 +35,7 @@ public class Order {
     private Client client;
 
     @ManyToOne
-    @JoinColumn(name = "idTable", nullable = true)
+    @JoinColumn(name = "idTable", nullable = true)// Columna de relación con la tabla RestaurantTable
     private RestaurantTable restaurantTable;
 
     @ManyToOne
