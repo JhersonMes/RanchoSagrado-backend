@@ -36,13 +36,12 @@ public class Contract {
     @Column(nullable = true, length = 500)
     private String clause;
 
-    // Relación Muchos a Uno con Empleado (La "pata de gallo" está en esta clase)
     @ManyToOne
     @JoinColumn(name = "id_employee", nullable = false,
             foreignKey = @ForeignKey(name = "FK_CONTRACT_EMPLOYEE"))
     private Employee employee;
 
-    // Relación Muchos a Uno con Proveedor
+    // Relacion Muchos a Uno con Proveedor
     @ManyToOne
     @JoinColumn(name = "id_provider", nullable = true,
             foreignKey = @ForeignKey(name = "FK_CONTRACT_PROVIDER"))
