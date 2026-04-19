@@ -16,29 +16,28 @@ import java.math.BigDecimal;
 public class Ingredient {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idIngredient;
 
     @Column(nullable = false, length = 100)
     private String name;
 
     @Column(nullable = false, length = 20)
-    private String unit; // KG, LITRO, UNIDAD, GRAMO
+    private String unitOfMeasure;
 
-    @Column(nullable = false, precision = 10, scale = 3)
-    private BigDecimal stock;
-
-    @Column(nullable = false, precision = 10, scale = 3)
-    private BigDecimal minStock;
-
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal unitCost;
+    @Column(length = 255)
+    private String description;
 
     @Column(nullable = false)
     private boolean status;
 
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal unitCost;
+
+    // Relación Muchos a Uno con CategoriaIngrediente
     @ManyToOne
-    @JoinColumn(name = "idSupplier", nullable = true)
-    private Supplier supplier;
+    @JoinColumn(name = "id_category", nullable = false,
+            foreignKey = @ForeignKey(name = "FK_INGREDIENT_CATEGORY"))
+    private IngredientCategory ingredientCategory;
 }

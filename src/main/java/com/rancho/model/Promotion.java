@@ -1,4 +1,3 @@
-feat: agregar entidad Promotion con campos de promoción 
 package com.rancho.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

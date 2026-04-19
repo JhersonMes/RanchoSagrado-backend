@@ -12,30 +12,22 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Product {
+public class Menu {
 
     @Id
     @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idProduct;
+    private Integer idMenu;
 
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(length = 255)
-    private String description;
-
     @Column(nullable = false)
-    private Float preparationTime; // Sigue siendo útil para platos cocinados
+    private Integer dishQuantity; // Cantidad_Platos
+
+    @Column(length = 100)
+    private String description;
 
     @Column(nullable = false, precision = 8, scale = 2)
     private BigDecimal price;
-
-    @Column(nullable = false)
-    private boolean availability;
-
-    @ManyToOne
-    @JoinColumn(name = "id_product_category", nullable = false,
-            foreignKey = @ForeignKey(name = "FK_PRODUCT_CATEGORY"))
-    private ProductCategory category;
 }
