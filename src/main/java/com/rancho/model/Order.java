@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -35,10 +36,16 @@ public class Order {
     private Client client;
 
     @ManyToOne
-    @JoinColumn(name = "idTable", nullable = true)// Columna de relación con la tabla RestaurantTable
+    @JoinColumn(name = "idTable", nullable = true) // Columna de relación con la tabla RestaurantTable
     private RestaurantTable restaurantTable;
 
     @ManyToOne
     @JoinColumn(name = "idEmployee", nullable = false)
     private Employee employee;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Payment> payments;
+
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private PaymentVoucher paymentVoucher;
 }
