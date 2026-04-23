@@ -27,7 +27,7 @@ public class Supplier {
     @Column(nullable = false, length = 100, unique = true)
     private String contactEmail;
 
-    @Column(nullable = false, length = 9)
+    @Column(nullable = false, length = 9)//Campo teléfono obligatorio con máximo 9 caracteres
     private String phone;
 
     @Column(nullable = false, length = 250)
