@@ -29,7 +29,7 @@ public class Client {
     @Column(nullable = false, length = 50)
     private String lastName;
 
-    @Column(length = 9)
+    @Column(length = 9)//no se repite
     private String phone;
 
     @Column(length = 100)
