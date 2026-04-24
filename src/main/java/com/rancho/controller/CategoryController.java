@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 
 public class CategoryController {
-    private final ICategoryService service;//seesta anulamdo la inyección de independencias
+    private final ICategoryService service;//se esta anulamdo la inyección de dependencias
 
     @GetMapping // GET, POST, PUT, DELETE
     public List<Category> findAll() throws Exception{ //devuelve todas las categorias 
