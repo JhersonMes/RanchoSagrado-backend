@@ -25,7 +25,7 @@ public class CategoryController {
     private final ICategoryService service=null;
 
     @GetMapping // GET, POST, PUT, DELETE
-    public List<Category> findAll() throws Exception{
+    public List<Category> findAll() throws Exception{ //devuelve todas las categorias 
         return service.findAll();
     }
 
