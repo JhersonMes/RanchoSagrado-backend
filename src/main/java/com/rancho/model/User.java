@@ -35,14 +35,9 @@ public class User {
             foreignKey = @ForeignKey(name = "FK_USER_EMPLOYEE"))
     private Employee employee;
 
-    // Relación Muchos a Muchos con Roles
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_role",
-            joinColumns = @JoinColumn(name = "id_user", referencedColumnName = "idUser"),
-            inverseJoinColumns = @JoinColumn(name = "id_role", referencedColumnName = "idRole"),
-            foreignKey = @ForeignKey(name = "FK_USER_ROLE"),
-            inverseForeignKey = @ForeignKey(name = "FK_ROLE_USER")
-    )
-    private List<Role> roles;
+    // CAMBIO: Ahora es ManyToOne (Muchos Usuarios tienen un mismo Rol)
+    @ManyToOne
+    @JoinColumn(name = "id_role", nullable = false,
+            foreignKey = @ForeignKey(name = "FK_USER_ROLE"))
+    private Role role;
 }
