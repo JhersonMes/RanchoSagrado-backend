@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/clients")
-@RequiredArgsConstructor
+@RequiredArgsConstructor // genera el constructor por defecto sin argumentos
 public class ClientController {
 
     private final IClientService service;
@@ -28,7 +28,7 @@ public class ClientController {
         return service.findAll();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") // TRAE A UN CLIENTE POR SU ID EJEMPLO HTTP<:9090/clients/1 GET UNO POR UNO
     public Client findById(@PathVariable("id") Integer id) throws Exception {
         return service.findById(id);
     }
@@ -38,7 +38,14 @@ public class ClientController {
         return service.save(client);
     }
 
-    @PutMapping("/{id}")
+    @PostMapping("/batch")
+    public List<Client> saveAll(@RequestBody List<Client> clients) throws Exception {
+        return service.saveAll(clients);
+    }
+
+    @PutMapping("/{id}") // MODIFICA O ACTUALIZA LOS DATOS DE UN CLIENTE YA EXISTENTE EJEMPLO
+                         // HTTP<:9090/clients/1 PUT RECIBE UN
+                         // BODY JSON CON LOS DATOS DEL CLIENTE
     public Client update(@RequestBody Client client, @PathVariable("id") Integer id) throws Exception {
         return service.update(client, id);
     }
