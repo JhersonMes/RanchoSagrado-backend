@@ -35,9 +35,6 @@ public class Employee {
     @Column(nullable = false, length = 9)
     private String phone;
 
-    @Column(nullable = false, length = 100, unique = true)
-    private String email;
-
     @Column(nullable = false, length = 15)
     private String status;
 

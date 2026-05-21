@@ -1,6 +1,5 @@
 package com.rancho.model;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,6 +40,6 @@ public class Client {
     @Column(length = 150)
     private String address;
 
-    @Column(length = 11, unique = true)
+    @Column(length = 11)
     private String ruc;
 }

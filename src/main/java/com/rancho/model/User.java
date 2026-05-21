@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -23,7 +22,10 @@ public class User {
     @Column(nullable = false, length = 50, unique = true)
     private String username;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 50, unique = true)
+    private String email;
+
+    @Column(nullable = false, length = 200)
     private String password;
 
     @Column(nullable = false)
