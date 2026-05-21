@@ -1,14 +1,10 @@
 package com.rancho.service;
 
 import com.rancho.model.Client;
+import org.yaml.snakeyaml.events.Event;
 
 import java.util.List;
 
-public interface IClientService {
-    Client save(Client client) throws Exception;
-    List<Client> saveAll(List<Client> clients) throws Exception;
-    Client update(Client client, Integer id) throws Exception;
-    List<Client> findAll() throws Exception;
-    Client findById(Integer id) throws Exception;
-    void delete(Integer id) throws Exception;
+public interface IClientService extends IGenericService <Client, Integer> {
+
 }
