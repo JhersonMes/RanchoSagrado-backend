@@ -1,57 +1,84 @@
 package com.rancho.controller;
 
-import java.util.List;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.rancho.dto.ClientDTO;
 import com.rancho.model.Client;
 import com.rancho.service.IClientService;
-
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/clients")
-@RequiredArgsConstructor // genera el constructor por defecto sin argumentos
 public class ClientController {
 
     private final IClientService service;
+    private final ModelMapper modelMapper;
 
     @GetMapping
-    public List<Client> findAll() throws Exception {
-        return service.findAll();
+    public ResponseEntity<List<ClientDTO>> findAll() throws Exception {
+        List<ClientDTO> list = service.findAll().stream().map(e -> modelMapper.map(e, ClientDTO.class)).toList();
+
+        return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/{id}") // TRAE A UN CLIENTE POR SU ID EJEMPLO HTTP<:9090/clients/1 GET UNO POR UNO
-    public Client findById(@PathVariable("id") Integer id) throws Exception {
-        return service.findById(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<ClientDTO> findById(@PathVariable Integer id) throws Exception {
+        Client obj = service.findById(id);
+
+        return ResponseEntity.ok(modelMapper.map(obj, ClientDTO.class));
     }
 
     @PostMapping
-    public Client save(@RequestBody Client client) throws Exception {
-        return service.save(client);
+    public ResponseEntity<Void> save(@RequestBody ClientDTO dto) throws Exception {
+        Client obj = service.save(modelMapper.map(dto, Client.class));
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdClient()).toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
     @PostMapping("/batch")
-    public List<Client> saveAll(@RequestBody List<Client> clients) throws Exception {
-        return service.saveAll(clients);
+    public ResponseEntity<List<ClientDTO>> saveAll(@RequestBody List<ClientDTO> dtos) throws Exception {
+        List<Client> clients = dtos.stream().map(dto -> modelMapper.map(dto, Client.class)).toList();
+        List<Client> savedClients = service.saveAll(clients);
+        List<ClientDTO> savedDtos = savedClients.stream().map(client -> modelMapper.map(client, ClientDTO.class)).toList();
+        
+        return ResponseEntity.ok(savedDtos);
     }
 
-    @PutMapping("/{id}") // MODIFICA O ACTUALIZA LOS DATOS DE UN CLIENTE YA EXISTENTE EJEMPLO
-                         // HTTP<:9090/clients/1 PUT RECIBE UN
-                         // BODY JSON CON LOS DATOS DEL CLIENTE
-    public Client update(@RequestBody Client client, @PathVariable("id") Integer id) throws Exception {
-        return service.update(client, id);
+    @PutMapping("/{id}")
+    public ResponseEntity<ClientDTO> update(@PathVariable Integer id, @RequestBody ClientDTO dto) throws Exception {
+        Client obj = service.update(modelMapper.map(dto, Client.class), id);
+
+        return ResponseEntity.ok(modelMapper.map(obj, ClientDTO.class));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Integer id) throws Exception {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) throws Exception {
         service.delete(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/hateoas/{id}")
+    public EntityModel<ClientDTO> findByIdHateoas(@PathVariable Integer id) throws Exception {
+        Client obj = service.findById(id);
+        EntityModel<ClientDTO> entityModel = EntityModel.of(modelMapper.map(obj, ClientDTO.class));
+
+        WebMvcLinkBuilder link1 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ClientController.class).findById(id));
+        WebMvcLinkBuilder link2 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ClientController.class).findAll());
+
+        entityModel.add(link1.withRel("client-self-info"));
+        entityModel.add(link2.withRel("client-all-info"));
+
+        return entityModel;
     }
 }
