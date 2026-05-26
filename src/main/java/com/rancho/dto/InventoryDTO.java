@@ -17,5 +17,6 @@ public class InventoryDTO {
     private LocalDate lastReplenishmentDate;
     private BigDecimal minStock;
     private BigDecimal maxStock;
+
     private IngredientDTO ingredient;
 }

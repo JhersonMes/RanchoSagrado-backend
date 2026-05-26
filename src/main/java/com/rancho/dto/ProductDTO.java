@@ -9,14 +9,13 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class IngredientDTO {
-
-    private Integer idIngredient;
+public class ProductDTO {
+    private Integer idProduct;
     private String name;
-    private String unitOfMeasure;
     private String description;
-    private boolean status;
-    private BigDecimal unitCost;
+    private Float preparationTime;
+    private BigDecimal price;
+    private boolean availability;
 
-    private IngredientCategoryDTO ingredientCategory;
+    private ProductCategoryDTO category;
 }

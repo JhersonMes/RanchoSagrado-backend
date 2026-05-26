@@ -18,5 +18,6 @@ public class PaymentDTO {
     private String paymentMethod;
     private String cardDetails;
     private String status;
+
     private OrderDTO order;
 }

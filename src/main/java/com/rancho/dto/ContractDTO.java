@@ -18,5 +18,6 @@ public class ContractDTO {
     private String contractType;
     private BigDecimal salary;
     private String clause;
+
     private EmployeeDTO employee;
 }

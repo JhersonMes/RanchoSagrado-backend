@@ -3,20 +3,22 @@ package com.rancho.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class IngredientDTO {
+public class PromotionDTO {
 
-    private Integer idIngredient;
+    private Integer idPromotion;
     private String name;
-    private String unitOfMeasure;
     private String description;
+    private BigDecimal discountPercentage;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private boolean status;
-    private BigDecimal unitCost;
 
-    private IngredientCategoryDTO ingredientCategory;
+    private List<ProductDTO> products;
 }

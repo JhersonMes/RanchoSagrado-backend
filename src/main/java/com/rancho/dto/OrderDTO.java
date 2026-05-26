@@ -18,6 +18,7 @@ public class OrderDTO {
     private String detail;
     private BigDecimal subTotal;
     private BigDecimal total;
+
     private ClientDTO client;
     private EmployeeDTO employee;
 }
