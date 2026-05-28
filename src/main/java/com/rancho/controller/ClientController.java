@@ -40,7 +40,8 @@ public class ClientController {
     public ResponseEntity<Void> save(@RequestBody ClientDTO dto) throws Exception {
         Client obj = service.save(modelMapper.map(dto, Client.class));
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdClient()).toUri();
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdClient())
+                .toUri();
 
         return ResponseEntity.created(location).build();
     }
@@ -49,8 +50,9 @@ public class ClientController {
     public ResponseEntity<List<ClientDTO>> saveAll(@RequestBody List<ClientDTO> dtos) throws Exception {
         List<Client> clients = dtos.stream().map(dto -> modelMapper.map(dto, Client.class)).toList();
         List<Client> savedClients = service.saveAll(clients);
-        List<ClientDTO> savedDtos = savedClients.stream().map(client -> modelMapper.map(client, ClientDTO.class)).toList();
-        
+        List<ClientDTO> savedDtos = savedClients.stream().map(client -> modelMapper.map(client, ClientDTO.class))
+                .toList();
+
         return ResponseEntity.ok(savedDtos);
     }
 
@@ -73,8 +75,10 @@ public class ClientController {
         Client obj = service.findById(id);
         EntityModel<ClientDTO> entityModel = EntityModel.of(modelMapper.map(obj, ClientDTO.class));
 
-        WebMvcLinkBuilder link1 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ClientController.class).findById(id));
-        WebMvcLinkBuilder link2 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ClientController.class).findAll());
+        WebMvcLinkBuilder link1 = WebMvcLinkBuilder
+                .linkTo(WebMvcLinkBuilder.methodOn(ClientController.class).findById(id));
+        WebMvcLinkBuilder link2 = WebMvcLinkBuilder
+                .linkTo(WebMvcLinkBuilder.methodOn(ClientController.class).findAll());
 
         entityModel.add(link1.withRel("client-self-info"));
         entityModel.add(link2.withRel("client-all-info"));

@@ -1,49 +1,78 @@
 package com.rancho.controller;
 
-import java.util.List;
-
-import org.springframework.web.bind.annotation.*;
-
+import com.rancho.dto.ProductDTO;
 import com.rancho.model.Product;
 import com.rancho.service.IProductService;
-
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
 
 @RestController
-@RequestMapping("/products")
 @RequiredArgsConstructor
+@RequestMapping("/products")
 @CrossOrigin(origins = "*")
 public class ProductController {
 
     private final IProductService service;
+    private final ModelMapper modelMapper;
 
     @GetMapping
-    public List<Product> findAll() throws Exception {
-        return service.findAll();
+    public ResponseEntity<List<ProductDTO>> findAll() throws Exception {
+        List<ProductDTO> list = service.findAll().stream().map(e -> modelMapper.map(e, ProductDTO.class)).toList();
+        return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{id}")
-    public Product findById(@PathVariable("id") Integer id) throws Exception {
-        return service.findById(id);
+    public ResponseEntity<ProductDTO> findById(@PathVariable Integer id) throws Exception {
+        Product obj = service.findById(id);
+        return ResponseEntity.ok(modelMapper.map(obj, ProductDTO.class));
     }
 
     @PostMapping
-    public Product save(@RequestBody Product product) throws Exception {
-        return service.save(product);
+    public ResponseEntity<Void> save(@RequestBody ProductDTO dto) throws Exception {
+        Product obj = service.save(modelMapper.map(dto, Product.class));
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdProduct()).toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @PostMapping("/batch")
-    public List<Product> saveAll(@RequestBody List<Product> products) throws Exception {
-        return service.saveAll(products);
+    public ResponseEntity<List<ProductDTO>> saveAll(@RequestBody List<ProductDTO> dtos) throws Exception {
+        List<Product> entities = dtos.stream().map(dto -> modelMapper.map(dto, Product.class)).toList();
+        List<Product> savedEntities = service.saveAll(entities);
+        List<ProductDTO> savedDtos = savedEntities.stream().map(item -> modelMapper.map(item, ProductDTO.class)).toList();
+        return ResponseEntity.ok(savedDtos);
     }
 
     @PutMapping("/{id}")
-    public Product update(@RequestBody Product product, @PathVariable("id") Integer id) throws Exception {
-        return service.update(product, id);
+    public ResponseEntity<ProductDTO> update(@PathVariable Integer id, @RequestBody ProductDTO dto) throws Exception {
+        Product obj = service.update(modelMapper.map(dto, Product.class), id);
+        return ResponseEntity.ok(modelMapper.map(obj, ProductDTO.class));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Integer id) throws Exception {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) throws Exception {
         service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/hateoas/{id}")
+    public EntityModel<ProductDTO> findByIdHateoas(@PathVariable Integer id) throws Exception {
+        Product obj = service.findById(id);
+        EntityModel<ProductDTO> entityModel = EntityModel.of(modelMapper.map(obj, ProductDTO.class));
+
+        WebMvcLinkBuilder link1 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProductController.class).findById(id));
+        WebMvcLinkBuilder link2 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProductController.class).findAll());
+
+        entityModel.add(link1.withRel("product-self-info"));
+        entityModel.add(link2.withRel("product-all-info"));
+
+        return entityModel;
     }
 }
