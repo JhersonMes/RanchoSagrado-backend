@@ -1,23 +1,24 @@
 package com.rancho.controller;
 
+import java.net.URI;
+import java.util.List;
+
 import com.rancho.dto.ProductCategoryDTO;
-import com.rancho.model.ProductCategory;
-import com.rancho.service.IProductCategoryService;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.rancho.model.ProductCategory;
+import com.rancho.service.IProductCategoryService;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-import java.util.List;
-
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/product-categories")
-@CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class ProductCategoryController {
 
     private final IProductCategoryService service;
@@ -44,21 +45,24 @@ public class ProductCategoryController {
 
     @PostMapping("/batch")
     public ResponseEntity<List<ProductCategoryDTO>> saveAll(@RequestBody List<ProductCategoryDTO> dtos) throws Exception {
-        List<ProductCategory> entities = dtos.stream().map(dto -> modelMapper.map(dto, ProductCategory.class)).toList();
-        List<ProductCategory> savedEntities = service.saveAll(entities);
-        List<ProductCategoryDTO> savedDtos = savedEntities.stream().map(item -> modelMapper.map(item, ProductCategoryDTO.class)).toList();
+        List<ProductCategory> productCategories = dtos.stream().map(dto -> modelMapper.map(dto, ProductCategory.class)).toList();
+        List<ProductCategory> savesProductCategories = service.saveAll(productCategories);
+        List<ProductCategoryDTO> savedDtos = savesProductCategories.stream().map(productCategory -> modelMapper.map(productCategory, ProductCategoryDTO.class)).toList();
+
         return ResponseEntity.ok(savedDtos);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductCategoryDTO> update(@PathVariable Integer id, @RequestBody ProductCategoryDTO dto) throws Exception {
         ProductCategory obj = service.update(modelMapper.map(dto, ProductCategory.class), id);
+
         return ResponseEntity.ok(modelMapper.map(obj, ProductCategoryDTO.class));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) throws Exception {
         service.delete(id);
+
         return ResponseEntity.noContent().build();
     }
 
@@ -70,8 +74,8 @@ public class ProductCategoryController {
         WebMvcLinkBuilder link1 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProductCategoryController.class).findById(id));
         WebMvcLinkBuilder link2 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProductCategoryController.class).findAll());
 
-        entityModel.add(link1.withRel("productcategory-self-info"));
-        entityModel.add(link2.withRel("productcategory-all-info"));
+        entityModel.add(link1.withRel("product-category-self-info"));
+        entityModel.add(link2.withRel("product-category-all-info"));
 
         return entityModel;
     }

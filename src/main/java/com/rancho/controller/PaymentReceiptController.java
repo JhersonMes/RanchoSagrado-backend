@@ -1,23 +1,24 @@
 package com.rancho.controller;
 
-import com.rancho.dto.PaymentReceiptDTO;
-import com.rancho.model.PaymentReceipt;
-import com.rancho.service.IPaymentReceiptService;
-import lombok.RequiredArgsConstructor;
+import java.net.URI;
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.rancho.dto.PaymentReceiptDTO;
+import com.rancho.model.PaymentReceipt;
+import com.rancho.service.IPaymentReceiptService;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-import java.util.List;
-
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/payment-receipts")
-@CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class PaymentReceiptController {
 
     private final IPaymentReceiptService service;
@@ -25,28 +26,36 @@ public class PaymentReceiptController {
 
     @GetMapping
     public ResponseEntity<List<PaymentReceiptDTO>> findAll() throws Exception {
-        List<PaymentReceiptDTO> list = service.findAll().stream().map(e -> modelMapper.map(e, PaymentReceiptDTO.class)).toList();
+        List<PaymentReceiptDTO> list = service.findAll().stream()
+                .map(e -> modelMapper.map(e, PaymentReceiptDTO.class))
+                .toList();
         return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PaymentReceiptDTO> findById(@PathVariable Integer id) throws Exception {
         PaymentReceipt obj = service.findById(id);
+
         return ResponseEntity.ok(modelMapper.map(obj, PaymentReceiptDTO.class));
     }
 
     @PostMapping
     public ResponseEntity<Void> save(@RequestBody PaymentReceiptDTO dto) throws Exception {
         PaymentReceipt obj = service.save(modelMapper.map(dto, PaymentReceipt.class));
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdReceipt()).toUri();
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(obj.getIdReceipt())
+                .toUri();
+
         return ResponseEntity.created(location).build();
     }
 
     @PostMapping("/batch")
     public ResponseEntity<List<PaymentReceiptDTO>> saveAll(@RequestBody List<PaymentReceiptDTO> dtos) throws Exception {
-        List<PaymentReceipt> entities = dtos.stream().map(dto -> modelMapper.map(dto, PaymentReceipt.class)).toList();
-        List<PaymentReceipt> savedEntities = service.saveAll(entities);
-        List<PaymentReceiptDTO> savedDtos = savedEntities.stream().map(item -> modelMapper.map(item, PaymentReceiptDTO.class)).toList();
+        List<PaymentReceipt> list = dtos.stream().map(dto -> modelMapper.map(dto, PaymentReceipt.class)).toList();
+        List<PaymentReceipt> saved = service.saveAll(list);
+        List<PaymentReceiptDTO> savedDtos = saved.stream().map(receipt -> modelMapper.map(receipt, PaymentReceiptDTO.class)).toList();
         return ResponseEntity.ok(savedDtos);
     }
 
@@ -70,8 +79,8 @@ public class PaymentReceiptController {
         WebMvcLinkBuilder link1 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PaymentReceiptController.class).findById(id));
         WebMvcLinkBuilder link2 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PaymentReceiptController.class).findAll());
 
-        entityModel.add(link1.withRel("paymentreceipt-self-info"));
-        entityModel.add(link2.withRel("paymentreceipt-all-info"));
+        entityModel.add(link1.withRel("payment-receipt-self-info"));
+        entityModel.add(link2.withRel("payment-receipt-all-info"));
 
         return entityModel;
     }

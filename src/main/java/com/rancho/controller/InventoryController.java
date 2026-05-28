@@ -17,7 +17,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/inventories")
-@CrossOrigin(origins = "*")
 public class InventoryController {
 
     private final IInventoryService service;

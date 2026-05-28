@@ -17,7 +17,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/contracts")
-@CrossOrigin(origins = "*")
 public class ContractController {
 
     private final IContractService service;
