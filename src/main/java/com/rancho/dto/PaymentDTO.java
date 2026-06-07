@@ -1,5 +1,9 @@
 package com.rancho.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,11 +16,26 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PaymentDTO {
 
+    @NotNull(message = "El id del pago es requerido")
     private Integer idPayment;
+
+    @NotNull(message = "La fecha del pago es requerida")
     private LocalDateTime paymentDate;
+
+    @NotNull(message = "El monto es requerido")
+    @Min(value = 0, message = "El monto debe ser mayor o igual a 0")
     private BigDecimal amount;
+
+    @NotNull(message = "El metodo de pago es requerido")
+    @Size(min = 2, max = 50, message = "El metodo de pago debe tener entre 2 y 50 caracteres")
     private String paymentMethod;
+
+    @NotNull(message = "Los detalles de la tarjeta son requeridos")
+    @Size(min = 2, max = 50, message = "Los detalles de la tarjeta deben tener entre 2 y 50 caracteres")
     private String cardDetails;
+
+    @NotNull(message = "El estado del pago es requerido")
+    @Size(min = 2, max = 50, message = "El estado del pago debe tener entre 2 y 50 caracteres")
     private String status;
 
     private OrderDTO order;

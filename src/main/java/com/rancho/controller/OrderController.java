@@ -3,8 +3,10 @@ package com.rancho.controller;
 import com.rancho.dto.OrderDTO;
 import com.rancho.model.Order;
 import com.rancho.service.IOrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.util.List;
 public class OrderController {
 
     private final IOrderService service;
+    @Qualifier("orderMapper")
     private final ModelMapper modelMapper;
 
     @GetMapping
@@ -29,13 +32,13 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDTO> findById(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<OrderDTO> findById(@PathVariable("id") Integer id) throws Exception {
         Order obj = service.findById(id);
         return ResponseEntity.ok(modelMapper.map(obj, OrderDTO.class));
     }
 
     @PostMapping
-    public ResponseEntity<Void> save(@RequestBody OrderDTO dto) throws Exception {
+    public ResponseEntity<Void> save(@Valid @RequestBody OrderDTO dto) throws Exception {
         Order obj = service.save(modelMapper.map(dto, Order.class));
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdOrder()).toUri();
         return ResponseEntity.created(location).build();
@@ -50,19 +53,19 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OrderDTO> update(@PathVariable Integer id, @RequestBody OrderDTO dto) throws Exception {
+    public ResponseEntity<OrderDTO> update(@PathVariable("id") Integer id, @RequestBody OrderDTO dto) throws Exception {
         Order obj = service.update(modelMapper.map(dto, Order.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, OrderDTO.class));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/hateoas/{id}")
-    public EntityModel<OrderDTO> findByIdHateoas(@PathVariable Integer id) throws Exception {
+    public EntityModel<OrderDTO> findByIdHateoas(@PathVariable("id") Integer id) throws Exception {
         Order obj = service.findById(id);
         EntityModel<OrderDTO> entityModel = EntityModel.of(modelMapper.map(obj, OrderDTO.class));
 

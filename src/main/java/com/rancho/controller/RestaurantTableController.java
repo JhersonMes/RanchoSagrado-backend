@@ -1,10 +1,18 @@
 package com.rancho.controller;
 
+import java.net.URI;
 import java.util.List;
-import org.springframework.web.bind.annotation.*;
+
+import com.rancho.dto.RestaurantTableDTO;
 import com.rancho.model.RestaurantTable;
 import com.rancho.service.IRestaurantTableService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/restaurant-tables")
@@ -12,29 +20,37 @@ import lombok.RequiredArgsConstructor;
 public class RestaurantTableController {
 
     private final IRestaurantTableService service;
+    @Qualifier("restaurantTableMapper")
+    private final ModelMapper modelMapper;
 
     @GetMapping
-    public List<RestaurantTable> findAll() throws Exception {
-        return service.findAll();
+    public ResponseEntity<List<RestaurantTableDTO>> findAll() throws Exception {
+        List<RestaurantTableDTO> list = service.findAll().stream().map(e -> modelMapper.map(e, RestaurantTableDTO.class)).toList();
+        return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{id}")
-    public RestaurantTable findById(@PathVariable("id") Integer id) throws Exception {
-        return service.findById(id);
+    public ResponseEntity<RestaurantTableDTO> findById(@PathVariable("id") Integer id) throws Exception {
+        RestaurantTable obj = service.findById(id);
+        return ResponseEntity.ok(modelMapper.map(obj, RestaurantTableDTO.class));
     }
 
     @PostMapping
-    public RestaurantTable save(@RequestBody RestaurantTable restaurantTable) throws Exception {
-        return service.save(restaurantTable);
+    public ResponseEntity<Void> save(@Valid @RequestBody RestaurantTableDTO dto) throws Exception {
+        RestaurantTable obj = service.save(modelMapper.map(dto, RestaurantTable.class));
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdTable()).toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/{id}")
-    public RestaurantTable update(@RequestBody RestaurantTable restaurantTable, @PathVariable("id") Integer id) throws Exception {
-        return service.update(restaurantTable, id);
+    public ResponseEntity<RestaurantTableDTO> update(@RequestBody RestaurantTableDTO dto, @PathVariable("id") Integer id) throws Exception {
+        RestaurantTable obj = service.update(modelMapper.map(dto, RestaurantTable.class), id);
+        return ResponseEntity.ok(modelMapper.map(obj, RestaurantTableDTO.class));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Integer id) throws Exception {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

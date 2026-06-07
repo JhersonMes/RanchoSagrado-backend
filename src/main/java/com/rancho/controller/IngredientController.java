@@ -3,8 +3,10 @@ package com.rancho.controller;
 import com.rancho.dto.IngredientDTO;
 import com.rancho.model.Ingredient;
 import com.rancho.service.IIngredientService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.util.List;
 public class IngredientController {
 
     private final IIngredientService service;
+    @Qualifier("ingredientMapper")
     private final ModelMapper modelMapper;
 
     @GetMapping
@@ -29,32 +32,32 @@ public class IngredientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<IngredientDTO> findById(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<IngredientDTO> findById(@PathVariable("id") Integer id) throws Exception {
         Ingredient obj = service.findById(id);
         return ResponseEntity.ok(modelMapper.map(obj, IngredientDTO.class));
     }
 
     @PostMapping
-    public ResponseEntity<Void> save(@RequestBody IngredientDTO dto) throws Exception {
+    public ResponseEntity<Void> save(@Valid @RequestBody IngredientDTO dto) throws Exception {
         Ingredient obj = service.save(modelMapper.map(dto, Ingredient.class));
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdIngredient()).toUri();
         return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<IngredientDTO> update(@PathVariable Integer id, @RequestBody IngredientDTO dto) throws Exception {
+    public ResponseEntity<IngredientDTO> update(@PathVariable("id") Integer id, @RequestBody IngredientDTO dto) throws Exception {
         Ingredient obj = service.update(modelMapper.map(dto, Ingredient.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, IngredientDTO.class));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/hateoas/{id}")
-    public EntityModel<IngredientDTO> findByIdHateoas(@PathVariable Integer id) throws Exception {
+    public EntityModel<IngredientDTO> findByIdHateoas(@PathVariable("id") Integer id) throws Exception {
         Ingredient obj = service.findById(id);
         EntityModel<IngredientDTO> entityModel = EntityModel.of(modelMapper.map(obj, IngredientDTO.class));
 

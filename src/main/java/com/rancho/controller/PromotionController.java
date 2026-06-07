@@ -1,13 +1,18 @@
 package com.rancho.controller;
 
+import java.net.URI;
 import java.util.List;
 
-import org.springframework.web.bind.annotation.*;
-
+import com.rancho.dto.PromotionDTO;
 import com.rancho.model.Promotion;
 import com.rancho.service.IPromotionService;
-
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/promotions")
@@ -15,34 +20,45 @@ import lombok.RequiredArgsConstructor;
 public class PromotionController {
 
     private final IPromotionService service;
+    @Qualifier("promotionMapper")
+    private final ModelMapper modelMapper;
 
     @GetMapping
-    public List<Promotion> findAll() throws Exception {
-        return service.findAll();
+    public ResponseEntity<List<PromotionDTO>> findAll() throws Exception {
+        List<PromotionDTO> list = service.findAll().stream().map(e -> modelMapper.map(e, PromotionDTO.class)).toList();
+        return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{id}")
-    public Promotion findById(@PathVariable("id") Integer id) throws Exception {
-        return service.findById(id);
+    public ResponseEntity<PromotionDTO> findById(@PathVariable("id") Integer id) throws Exception {
+        Promotion obj = service.findById(id);
+        return ResponseEntity.ok(modelMapper.map(obj, PromotionDTO.class));
     }
 
     @PostMapping
-    public Promotion save(@RequestBody Promotion promotion) throws Exception {
-        return service.save(promotion);
+    public ResponseEntity<Void> save(@Valid @RequestBody PromotionDTO dto) throws Exception {
+        Promotion obj = service.save(modelMapper.map(dto, Promotion.class));
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdPromotion()).toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @PostMapping("/batch")
-    public List<Promotion> saveAll(@RequestBody List<Promotion> promotions) throws Exception {
-        return service.saveAll(promotions);
+    public ResponseEntity<List<PromotionDTO>> saveAll(@RequestBody List<PromotionDTO> dtos) throws Exception {
+        List<Promotion> list = dtos.stream().map(dto -> modelMapper.map(dto, Promotion.class)).toList();
+        List<Promotion> saved = service.saveAll(list);
+        List<PromotionDTO> savedDtos = saved.stream().map(item -> modelMapper.map(item, PromotionDTO.class)).toList();
+        return ResponseEntity.ok(savedDtos);
     }
 
     @PutMapping("/{id}")
-    public Promotion update(@RequestBody Promotion promotion, @PathVariable("id") Integer id) throws Exception {
-        return service.update(promotion, id);
+    public ResponseEntity<PromotionDTO> update(@RequestBody PromotionDTO dto, @PathVariable("id") Integer id) throws Exception {
+        Promotion obj = service.update(modelMapper.map(dto, Promotion.class), id);
+        return ResponseEntity.ok(modelMapper.map(obj, PromotionDTO.class));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Integer id) throws Exception {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

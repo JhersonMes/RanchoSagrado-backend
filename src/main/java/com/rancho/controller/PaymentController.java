@@ -3,8 +3,10 @@ package com.rancho.controller;
 import com.rancho.dto.PaymentDTO;
 import com.rancho.model.Payment;
 import com.rancho.service.IPaymentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.util.List;
 public class PaymentController {
 
     private final IPaymentService service;
+    @Qualifier("paymentMapper")
     private final ModelMapper modelMapper;
 
     @GetMapping
@@ -29,13 +32,13 @@ public class PaymentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PaymentDTO> findById(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<PaymentDTO> findById(@PathVariable("id") Integer id) throws Exception {
         Payment obj = service.findById(id);
         return ResponseEntity.ok(modelMapper.map(obj, PaymentDTO.class));
     }
 
     @PostMapping
-    public ResponseEntity<Void> save(@RequestBody PaymentDTO dto) throws Exception {
+    public ResponseEntity<Void> save(@Valid @RequestBody PaymentDTO dto) throws Exception {
         Payment obj = service.save(modelMapper.map(dto, Payment.class));
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdPayment()).toUri();
         return ResponseEntity.created(location).build();
@@ -50,19 +53,19 @@ public class PaymentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PaymentDTO> update(@PathVariable Integer id, @RequestBody PaymentDTO dto) throws Exception {
+    public ResponseEntity<PaymentDTO> update(@PathVariable("id") Integer id, @RequestBody PaymentDTO dto) throws Exception {
         Payment obj = service.update(modelMapper.map(dto, Payment.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, PaymentDTO.class));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/hateoas/{id}")
-    public EntityModel<PaymentDTO> findByIdHateoas(@PathVariable Integer id) throws Exception {
+    public EntityModel<PaymentDTO> findByIdHateoas(@PathVariable("id") Integer id) throws Exception {
         Payment obj = service.findById(id);
         EntityModel<PaymentDTO> entityModel = EntityModel.of(modelMapper.map(obj, PaymentDTO.class));
 

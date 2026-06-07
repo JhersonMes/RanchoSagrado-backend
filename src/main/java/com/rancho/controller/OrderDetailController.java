@@ -3,8 +3,10 @@ package com.rancho.controller;
 import com.rancho.dto.OrderDetailDTO;
 import com.rancho.model.OrderDetail;
 import com.rancho.service.IOrderDetailService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.util.List;
 public class OrderDetailController {
 
     private final IOrderDetailService service;
+    @Qualifier("orderDetailMapper")
     private final ModelMapper modelMapper;
 
     @GetMapping
@@ -29,13 +32,13 @@ public class OrderDetailController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDetailDTO> findById(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<OrderDetailDTO> findById(@PathVariable("id") Integer id) throws Exception {
         OrderDetail obj = service.findById(id);
         return ResponseEntity.ok(modelMapper.map(obj, OrderDetailDTO.class));
     }
 
     @PostMapping
-    public ResponseEntity<Void> save(@RequestBody OrderDetailDTO dto) throws Exception {
+    public ResponseEntity<Void> save(@Valid @RequestBody OrderDetailDTO dto) throws Exception {
         OrderDetail obj = service.save(modelMapper.map(dto, OrderDetail.class));
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdOrderDetail()).toUri();
         return ResponseEntity.created(location).build();
@@ -50,19 +53,19 @@ public class OrderDetailController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OrderDetailDTO> update(@PathVariable Integer id, @RequestBody OrderDetailDTO dto) throws Exception {
+    public ResponseEntity<OrderDetailDTO> update(@PathVariable("id") Integer id, @RequestBody OrderDetailDTO dto) throws Exception {
         OrderDetail obj = service.update(modelMapper.map(dto, OrderDetail.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, OrderDetailDTO.class));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/hateoas/{id}")
-    public EntityModel<OrderDetailDTO> findByIdHateoas(@PathVariable Integer id) throws Exception {
+    public EntityModel<OrderDetailDTO> findByIdHateoas(@PathVariable("id") Integer id) throws Exception {
         OrderDetail obj = service.findById(id);
         EntityModel<OrderDetailDTO> entityModel = EntityModel.of(modelMapper.map(obj, OrderDetailDTO.class));
 

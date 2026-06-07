@@ -4,7 +4,9 @@ import java.net.URI;
 import java.util.List;
 
 import com.rancho.dto.ProductCategoryDTO;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class ProductCategoryController {
 
     private final IProductCategoryService service;
+    @Qualifier("productCategoryMapper")
     private final ModelMapper modelMapper;
 
     @GetMapping
@@ -31,13 +34,13 @@ public class ProductCategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductCategoryDTO> findById(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<ProductCategoryDTO> findById(@PathVariable("id") Integer id) throws Exception {
         ProductCategory obj = service.findById(id);
         return ResponseEntity.ok(modelMapper.map(obj, ProductCategoryDTO.class));
     }
 
     @PostMapping
-    public ResponseEntity<Void> save(@RequestBody ProductCategoryDTO dto) throws Exception {
+    public ResponseEntity<Void> save(@Valid @RequestBody ProductCategoryDTO dto) throws Exception {
         ProductCategory obj = service.save(modelMapper.map(dto, ProductCategory.class));
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdProductCategory()).toUri();
         return ResponseEntity.created(location).build();
@@ -53,21 +56,21 @@ public class ProductCategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductCategoryDTO> update(@PathVariable Integer id, @RequestBody ProductCategoryDTO dto) throws Exception {
+    public ResponseEntity<ProductCategoryDTO> update(@PathVariable("id") Integer id, @RequestBody ProductCategoryDTO dto) throws Exception {
         ProductCategory obj = service.update(modelMapper.map(dto, ProductCategory.class), id);
 
         return ResponseEntity.ok(modelMapper.map(obj, ProductCategoryDTO.class));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
 
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/hateoas/{id}")
-    public EntityModel<ProductCategoryDTO> findByIdHateoas(@PathVariable Integer id) throws Exception {
+    public EntityModel<ProductCategoryDTO> findByIdHateoas(@PathVariable("id") Integer id) throws Exception {
         ProductCategory obj = service.findById(id);
         EntityModel<ProductCategoryDTO> entityModel = EntityModel.of(modelMapper.map(obj, ProductCategoryDTO.class));
 

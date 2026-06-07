@@ -3,8 +3,10 @@ package com.rancho.controller;
 import com.rancho.dto.ClientDTO;
 import com.rancho.model.Client;
 import com.rancho.service.IClientService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.util.List;
 public class ClientController {
 
     private final IClientService service;
+    @Qualifier("clientMapper")
     private final ModelMapper modelMapper;
 
     @GetMapping
@@ -30,14 +33,14 @@ public class ClientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClientDTO> findById(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<ClientDTO> findById(@PathVariable("id") Integer id) throws Exception {
         Client obj = service.findById(id);
 
         return ResponseEntity.ok(modelMapper.map(obj, ClientDTO.class));
     }
 
     @PostMapping
-    public ResponseEntity<Void> save(@RequestBody ClientDTO dto) throws Exception {
+    public ResponseEntity<Void> save(@Valid @RequestBody ClientDTO dto) throws Exception {
         Client obj = service.save(modelMapper.map(dto, Client.class));
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdClient())
@@ -57,21 +60,22 @@ public class ClientController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClientDTO> update(@PathVariable Integer id, @RequestBody ClientDTO dto) throws Exception {
+    public ResponseEntity<ClientDTO> update(@PathVariable("id") Integer id, @RequestBody ClientDTO dto)
+            throws Exception {
         Client obj = service.update(modelMapper.map(dto, Client.class), id);
 
         return ResponseEntity.ok(modelMapper.map(obj, ClientDTO.class));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
 
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/hateoas/{id}")
-    public EntityModel<ClientDTO> findByIdHateoas(@PathVariable Integer id) throws Exception {
+    public EntityModel<ClientDTO> findByIdHateoas(@PathVariable("id") Integer id) throws Exception {
         Client obj = service.findById(id);
         EntityModel<ClientDTO> entityModel = EntityModel.of(modelMapper.map(obj, ClientDTO.class));
 

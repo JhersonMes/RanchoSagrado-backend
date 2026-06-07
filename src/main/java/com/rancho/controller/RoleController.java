@@ -1,10 +1,18 @@
 package com.rancho.controller;
 
+import java.net.URI;
 import java.util.List;
-import org.springframework.web.bind.annotation.*;
+
+import com.rancho.dto.RoleDTO;
 import com.rancho.model.Role;
 import com.rancho.service.IRoleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/roles")
@@ -12,29 +20,37 @@ import lombok.RequiredArgsConstructor;
 public class RoleController {
 
     private final IRoleService service;
+    @Qualifier("roleMapper")
+    private final ModelMapper modelMapper;
 
     @GetMapping
-    public List<Role> findAll() throws Exception {
-        return service.findAll();
+    public ResponseEntity<List<RoleDTO>> findAll() throws Exception {
+        List<RoleDTO> list = service.findAll().stream().map(e -> modelMapper.map(e, RoleDTO.class)).toList();
+        return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{id}")
-    public Role findById(@PathVariable("id") Integer id) throws Exception {
-        return service.findById(id);
+    public ResponseEntity<RoleDTO> findById(@PathVariable("id") Integer id) throws Exception {
+        Role obj = service.findById(id);
+        return ResponseEntity.ok(modelMapper.map(obj, RoleDTO.class));
     }
 
     @PostMapping
-    public Role save(@RequestBody Role role) throws Exception {
-        return service.save(role);
+    public ResponseEntity<Void> save(@Valid @RequestBody RoleDTO dto) throws Exception {
+        Role obj = service.save(modelMapper.map(dto, Role.class));
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdRole()).toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/{id}")
-    public Role update(@RequestBody Role role, @PathVariable("id") Integer id) throws Exception {
-        return service.update(role, id);
+    public ResponseEntity<RoleDTO> update(@RequestBody RoleDTO dto, @PathVariable("id") Integer id) throws Exception {
+        Role obj = service.update(modelMapper.map(dto, Role.class), id);
+        return ResponseEntity.ok(modelMapper.map(obj, RoleDTO.class));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Integer id) throws Exception {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

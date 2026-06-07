@@ -5,6 +5,7 @@ import com.rancho.model.Contract;
 import com.rancho.service.IContractService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.List;
 public class ContractController {
 
     private final IContractService service;
+    @Qualifier("contractMapper")
     private final ModelMapper modelMapper;
 
     @GetMapping

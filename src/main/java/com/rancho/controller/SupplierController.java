@@ -3,8 +3,10 @@ package com.rancho.controller;
 import com.rancho.dto.SupplierDTO;
 import com.rancho.model.Supplier;
 import com.rancho.service.ISupplierService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ import java.util.List;
 public class SupplierController {
 
     private final ISupplierService service;
+    @Qualifier("supplierMapper")
     private final ModelMapper modelMapper;
 
     @GetMapping
@@ -30,13 +33,13 @@ public class SupplierController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SupplierDTO> findById(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<SupplierDTO> findById(@PathVariable("id") Integer id) throws Exception {
         Supplier obj = service.findById(id);
         return ResponseEntity.ok(modelMapper.map(obj, SupplierDTO.class));
     }
 
     @PostMapping
-    public ResponseEntity<Void> save(@RequestBody SupplierDTO dto) throws Exception {
+    public ResponseEntity<Void> save(@Valid @RequestBody SupplierDTO dto) throws Exception {
         Supplier obj = service.save(modelMapper.map(dto, Supplier.class));
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdSupplier()).toUri();
         return ResponseEntity.created(location).build();
@@ -51,19 +54,19 @@ public class SupplierController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SupplierDTO> update(@PathVariable Integer id, @RequestBody SupplierDTO dto) throws Exception {
+    public ResponseEntity<SupplierDTO> update(@PathVariable("id") Integer id, @RequestBody SupplierDTO dto) throws Exception {
         Supplier obj = service.update(modelMapper.map(dto, Supplier.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, SupplierDTO.class));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/hateoas/{id}")
-    public EntityModel<SupplierDTO> findByIdHateoas(@PathVariable Integer id) throws Exception {
+    public EntityModel<SupplierDTO> findByIdHateoas(@PathVariable("id") Integer id) throws Exception {
         Supplier obj = service.findById(id);
         EntityModel<SupplierDTO> entityModel = EntityModel.of(modelMapper.map(obj, SupplierDTO.class));
 

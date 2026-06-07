@@ -3,8 +3,10 @@ package com.rancho.controller;
 import com.rancho.dto.MenuDTO;
 import com.rancho.model.Menu;
 import com.rancho.service.IMenuService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.util.List;
 public class MenuController {
 
     private final IMenuService service;
+    @Qualifier("menuMapper")
     private final ModelMapper modelMapper;
 
     @GetMapping
@@ -29,13 +32,13 @@ public class MenuController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MenuDTO> findById(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<MenuDTO> findById(@PathVariable("id") Integer id) throws Exception {
         Menu obj = service.findById(id);
         return ResponseEntity.ok(modelMapper.map(obj, MenuDTO.class));
     }
 
     @PostMapping
-    public ResponseEntity<Void> save(@RequestBody MenuDTO dto) throws Exception {
+    public ResponseEntity<Void> save(@Valid @RequestBody MenuDTO dto) throws Exception {
         Menu obj = service.save(modelMapper.map(dto, Menu.class));
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdMenu()).toUri();
         return ResponseEntity.created(location).build();
@@ -50,19 +53,19 @@ public class MenuController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MenuDTO> update(@PathVariable Integer id, @RequestBody MenuDTO dto) throws Exception {
+    public ResponseEntity<MenuDTO> update(@PathVariable("id") Integer id, @RequestBody MenuDTO dto) throws Exception {
         Menu obj = service.update(modelMapper.map(dto, Menu.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, MenuDTO.class));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/hateoas/{id}")
-    public EntityModel<MenuDTO> findByIdHateoas(@PathVariable Integer id) throws Exception {
+    public EntityModel<MenuDTO> findByIdHateoas(@PathVariable("id") Integer id) throws Exception {
         Menu obj = service.findById(id);
         EntityModel<MenuDTO> entityModel = EntityModel.of(modelMapper.map(obj, MenuDTO.class));
 

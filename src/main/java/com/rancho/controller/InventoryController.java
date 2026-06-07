@@ -3,8 +3,10 @@ package com.rancho.controller;
 import com.rancho.dto.InventoryDTO;
 import com.rancho.model.Inventory;
 import com.rancho.service.IInventoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.util.List;
 public class InventoryController {
 
     private final IInventoryService service;
+    @Qualifier("inventoryMapper")
     private final ModelMapper modelMapper;
 
     @GetMapping
@@ -29,13 +32,13 @@ public class InventoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<InventoryDTO> findById(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<InventoryDTO> findById(@PathVariable("id") Integer id) throws Exception {
         Inventory obj = service.findById(id);
         return ResponseEntity.ok(modelMapper.map(obj, InventoryDTO.class));
     }
 
     @PostMapping
-    public ResponseEntity<Void> save(@RequestBody InventoryDTO dto) throws Exception {
+    public ResponseEntity<Void> save(@Valid @RequestBody InventoryDTO dto) throws Exception {
         Inventory obj = service.save(modelMapper.map(dto, Inventory.class));
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdInventory()).toUri();
         return ResponseEntity.created(location).build();
@@ -50,19 +53,19 @@ public class InventoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<InventoryDTO> update(@PathVariable Integer id, @RequestBody InventoryDTO dto) throws Exception {
+    public ResponseEntity<InventoryDTO> update(@PathVariable("id") Integer id, @RequestBody InventoryDTO dto) throws Exception {
         Inventory obj = service.update(modelMapper.map(dto, Inventory.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, InventoryDTO.class));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/hateoas/{id}")
-    public EntityModel<InventoryDTO> findByIdHateoas(@PathVariable Integer id) throws Exception {
+    public EntityModel<InventoryDTO> findByIdHateoas(@PathVariable("id") Integer id) throws Exception {
         Inventory obj = service.findById(id);
         EntityModel<InventoryDTO> entityModel = EntityModel.of(modelMapper.map(obj, InventoryDTO.class));
 
