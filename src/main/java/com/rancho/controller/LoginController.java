@@ -1,11 +1,17 @@
 package com.rancho.controller;
 
+import com.rancho.dto.UserDTO;
+import com.rancho.model.User;
 import com.rancho.security.JwtRequest;
 import com.rancho.security.JwtResponse;
 import com.rancho.security.JwtTokenUtil;
 import com.rancho.security.JwtUserDetailsService;
+import com.rancho.service.IUserService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -28,6 +34,9 @@ public class LoginController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
     private final JwtUserDetailsService jwtUserDetailsService;
+    private final IUserService userService;
+    @Qualifier("userMapper")
+    private final ModelMapper modelMapper;
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest jwtRequest) throws Exception {
@@ -42,6 +51,13 @@ public class LoginController {
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<UserDTO> register(@Valid @RequestBody UserDTO userDTO) throws Exception {
+        User user = modelMapper.map(userDTO, User.class);
+        User savedUser = userService.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(savedUser, UserDTO.class));
     }
 
     private void authenticate(String username, String password) throws Exception{

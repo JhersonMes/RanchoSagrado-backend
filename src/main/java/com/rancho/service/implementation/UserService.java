@@ -1,11 +1,11 @@
 package com.rancho.service.implementation;
 
-import java.util.List;
 import com.rancho.model.User;
 import com.rancho.repository.IGenericRepository;
 import com.rancho.repository.IUserRepository;
 import com.rancho.service.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,9 +13,31 @@ import org.springframework.stereotype.Service;
 public class UserService extends GenericService<User, Integer> implements IUserService {
 
     private final IUserRepository repo;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public IGenericRepository<User, Integer> getRepo() {
         return repo;
+    }
+
+    @Override
+    public User save(User user) throws Exception {
+        if (user.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        return super.save(user);
+    }
+
+    @Override
+    public User update(User user, Integer id) throws Exception {
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        } else {
+            User existingUser = repo.findById(id).orElse(null);
+            if (existingUser != null) {
+                user.setPassword(existingUser.getPassword());
+            }
+        }
+        return super.update(user, id);
     }
 }

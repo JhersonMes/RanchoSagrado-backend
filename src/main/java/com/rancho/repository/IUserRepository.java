@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface IUserRepository extends IGenericRepository<User, Integer> {
     User findOneByUsername(String username);
+    User findOneByUsernameOrEmail(String username, String email);
 
     @Transactional
     @Modifying
