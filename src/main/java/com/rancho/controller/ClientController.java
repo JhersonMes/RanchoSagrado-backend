@@ -77,7 +77,7 @@ public class ClientController {
     @GetMapping("/hateoas/{id}")
     public EntityModel<ClientDTO> findByIdHateoas(@PathVariable("id") Integer id) throws Exception {
         Client obj = service.findById(id);
-        EntityModel<ClientDTO> entityModel = EntityModel.of(modelMapper.map(obj, ClientDTO.class));
+        EntityModel<ClientDTO> entityModel = EntityModel.of(modelMapper.map(obj, ClientDTO.class));// Se agrega mapeo de Client a ClientDTO para respuesta HATEOAS
 
         WebMvcLinkBuilder link1 = WebMvcLinkBuilder
                 .linkTo(WebMvcLinkBuilder.methodOn(ClientController.class).findById(id));
