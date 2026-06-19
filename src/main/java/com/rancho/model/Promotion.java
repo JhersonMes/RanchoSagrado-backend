@@ -41,6 +41,8 @@ public class Promotion {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
+        // Configura la tabla intermedia product_promotion para la relación entre promociones y productos,
+        // definiendo las claves foráneas y sus respectivos nombres en la base de datos.
             name = "product_promotion",
             joinColumns = @JoinColumn(name = "id_promotion"),
             inverseJoinColumns = @JoinColumn(name = "id_product"),
