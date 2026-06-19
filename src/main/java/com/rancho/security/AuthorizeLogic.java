@@ -13,6 +13,7 @@ public class AuthorizeLogic {
         boolean hasAccess = false;
 
         String methodRole = switch (path){
+            // Define los roles autorizados para cada operación del sistema
             case "findAll" -> "ADMIN";
             case "findById", "getById" -> "USER,DBA";
             default -> "ROOT";
