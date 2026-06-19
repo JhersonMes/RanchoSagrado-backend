@@ -21,7 +21,7 @@ public class Inventory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idInventory;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 10, scale = 2)// Define una columna obligatoria con hasta 10 dígitos en total y 2 decimales
     private BigDecimal stockQuantity;
 
     @Column(nullable = false)
