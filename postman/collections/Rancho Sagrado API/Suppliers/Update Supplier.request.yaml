@@ -1,0 +1,20 @@
+$kind: http-request
+name: Update Supplier
+method: PUT
+url: '{{baseUrl}}/suppliers/{{supplierId}}'
+order: 4000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "companyName": "Distribuidora El Sol SAC",
+      "ruc": "20123456789",
+      "contactEmail": "contacto@elsol.com",
+      "phone": "014567890",
+      "address": "Av. Industrial 999",
+      "supplyType": "Vegetables, Fruits and Grains",
+      "status": "active"
+    }

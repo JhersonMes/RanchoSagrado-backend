@@ -1,0 +1,5 @@
+$kind: http-request
+name: Get All Employees
+method: GET
+url: '{{baseUrl}}/employees'
+order: 1000

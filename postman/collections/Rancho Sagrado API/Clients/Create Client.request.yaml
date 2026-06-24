@@ -1,0 +1,21 @@
+$kind: http-request
+name: Create Client
+method: POST
+url: '{{baseUrl}}/clients'
+order: 3000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "dni": 12345678,
+      "name": "Juan",
+      "lastName": "Perez",
+      "phone": "987654321",
+      "email": "juan.perez@email.com",
+      "birthDate": "1990-05-15",
+      "address": "Av. Lima 123",
+      "ruc": "12345678901"
+    }

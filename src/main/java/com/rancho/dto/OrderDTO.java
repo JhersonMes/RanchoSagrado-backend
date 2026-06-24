@@ -40,4 +40,5 @@ public class OrderDTO {
 
     private ClientDTO client;
     private EmployeeDTO employee;
+    private RestaurantTableDTO restaurantTable;
 }

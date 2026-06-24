@@ -1,0 +1,21 @@
+a$kind: http-request
+name: Create Employee
+method: POST
+url: '{{baseUrl}}/employees'
+order: 3000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Maria",
+      "lastName": "Garcia",
+      "address": "Jr. Cusco 456",
+      "job": "Waiter",
+      "phone": "912345678",
+      "email": "maria.garcia@rancho.com",
+      "status": "active",
+      "dni": "87654321"
+    }

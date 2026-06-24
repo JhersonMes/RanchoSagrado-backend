@@ -1,0 +1,1 @@
+import{a as c}from"./chunk-PEMZFTBG.js";import{O as e,cc as n,ga as o}from"./chunk-YYTW3EXQ.js";var i=class t extends c{url=`${n.HOST}/contracts`;static \u0275fac=(()=>{let r;return function(a){return(r||(r=o(t)))(a||t)}})();static \u0275prov=e({token:t,factory:t.\u0275fac,providedIn:"root"})};export{i as a};

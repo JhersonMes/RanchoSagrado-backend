@@ -19,11 +19,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
     private final JwtUserDetailsService jwtUserDetailsService;
 
-    //Enfoque Authorization Bearer Token
+    // Enfoque Authorization Bearer Token
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         final String header = request.getHeader("Authorization");
-        //Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
+        // Bearer
+        // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
 
         String username = null;
         String jwtToken = null;
@@ -32,23 +34,49 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             final int TOKEN_INDEX = 7;
             jwtToken = header.substring(TOKEN_INDEX);
 
-            try{
+            try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 request.setAttribute("msg", ex.getMessage());
             }
         }
 
-        if(username != null && jwtToken != null){
+        if (username != null && jwtToken != null) {
             UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(username);
 
-            if(jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null,
+                        userDetails.getAuthorities());
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+
+        // Rutas públicas y recursos estáticos del frontend Angular
+        return path.equals("/")
+                || path.equals("/index.html")
+                || path.equals("/login")
+                || path.equals("/register")
+                || path.startsWith("/mail")
+                || path.startsWith("/static")
+                || path.startsWith("/assets")
+                || path.startsWith("/images")
+                || path.startsWith("/frontend")
+                || path.endsWith(".js")
+                || path.endsWith(".css")
+                || path.endsWith(".html")
+                || path.endsWith(".json")
+                || path.endsWith(".ico")
+                || path.endsWith(".map")
+                || path.endsWith(".woff")
+                || path.endsWith(".woff2")
+                || path.endsWith(".ttf");
     }
 }

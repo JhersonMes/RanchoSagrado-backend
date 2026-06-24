@@ -29,4 +29,5 @@ public class OrderDetailDTO {
     private String notes;
 
     private OrderDTO order;
+    private ProductDTO product;
 }

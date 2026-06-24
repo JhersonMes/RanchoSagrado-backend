@@ -1,0 +1,21 @@
+$kind: http-request
+name: Update Employee
+method: PUT
+url: '{{baseUrl}}/employees/{{employeeId}}'
+order: 4000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Maria Updated",
+      "lastName": "Garcia",
+      "address": "Jr. Cusco 789",
+      "job": "Senior Waiter",
+      "phone": "912345678",
+      "email": "maria.garcia@rancho.com",
+      "status": "active",
+      "dni": "87654321"
+    }
