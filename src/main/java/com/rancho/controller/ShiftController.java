@@ -1,5 +1,8 @@
 package com.rancho.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.net.URI;
 import java.util.List;
 
@@ -52,5 +55,10 @@ public class ShiftController {
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/pageable")
+    public ResponseEntity<Page<Shift>> listPageable(Pageable pageable){
+        Page<Shift> page = service.listPage(pageable);
+        return ResponseEntity.ok(page);
     }
 }

@@ -1,5 +1,8 @@
 package com.rancho.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.net.URI;
 import java.util.List;
 
@@ -81,5 +84,11 @@ public class ProductCategoryController {
         entityModel.add(link2.withRel("product-category-all-info"));
 
         return entityModel;
+    }
+
+    @GetMapping("/pageable")
+    public ResponseEntity<Page<ProductCategory>> listPageable(Pageable pageable){
+        Page<ProductCategory> page = service.listPage(pageable);
+        return ResponseEntity.ok(page);
     }
 }

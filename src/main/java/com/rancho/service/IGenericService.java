@@ -11,4 +11,5 @@ public interface IGenericService<T, ID> {
     List<T> findAll() throws Exception;
     T findById(ID id) throws Exception;
     void delete(ID id) throws Exception;
+    org.springframework.data.domain.Page<T> listPage(org.springframework.data.domain.Pageable pageable);
 }

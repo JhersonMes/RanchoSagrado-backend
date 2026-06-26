@@ -1,5 +1,8 @@
 package com.rancho.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.rancho.dto.ClientDTO;
 import com.rancho.model.Client;
 import com.rancho.service.IClientService;
@@ -88,5 +91,11 @@ public class ClientController {
         entityModel.add(link2.withRel("client-all-info"));
 
         return entityModel;
+    }
+
+    @GetMapping("/pageable")
+    public ResponseEntity<Page<Client>> listPageable(Pageable pageable){
+        Page<Client> page = service.listPage(pageable);
+        return ResponseEntity.ok(page);
     }
 }

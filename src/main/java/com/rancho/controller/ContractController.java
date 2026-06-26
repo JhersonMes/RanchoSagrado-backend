@@ -1,5 +1,8 @@
 package com.rancho.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.rancho.dto.ContractDTO;
 import com.rancho.model.Contract;
 import com.rancho.service.IContractService;
@@ -70,5 +73,11 @@ public class ContractController {
         entityModel.add(link2.withRel("contract-all-info"));
 
         return entityModel;
+    }
+
+    @GetMapping("/pageable")
+    public ResponseEntity<Page<Contract>> listPageable(Pageable pageable){
+        Page<Contract> page = service.listPage(pageable);
+        return ResponseEntity.ok(page);
     }
 }

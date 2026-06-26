@@ -1,5 +1,8 @@
 package com.rancho.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.rancho.dto.OrderDetailDTO;
 import com.rancho.model.OrderDetail;
 import com.rancho.service.IOrderDetailService;
@@ -76,5 +79,11 @@ public class OrderDetailController {
         entityModel.add(link2.withRel("orderdetail-all-info"));
 
         return entityModel;
+    }
+
+    @GetMapping("/pageable")
+    public ResponseEntity<Page<OrderDetail>> listPageable(Pageable pageable){
+        Page<OrderDetail> page = service.listPage(pageable);
+        return ResponseEntity.ok(page);
     }
 }

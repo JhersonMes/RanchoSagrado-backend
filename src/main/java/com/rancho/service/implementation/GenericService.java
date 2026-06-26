@@ -40,4 +40,9 @@ public abstract class GenericService<T, ID> implements IGenericService<T, ID> {
     public void delete(ID id) throws Exception {
         getRepo().deleteById(id);
     }
+
+    @Override
+    public org.springframework.data.domain.Page<T> listPage(org.springframework.data.domain.Pageable pageable) {
+        return getRepo().findAll(pageable);
+    }
 }

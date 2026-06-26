@@ -1,5 +1,8 @@
 package com.rancho.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.rancho.dto.SupplierDTO;
 import com.rancho.model.Supplier;
 import com.rancho.service.ISupplierService;
@@ -77,5 +80,11 @@ public class SupplierController {
         entityModel.add(link2.withRel("supplier-all-info"));
 
         return entityModel;
+    }
+
+    @GetMapping("/pageable")
+    public ResponseEntity<Page<Supplier>> listPageable(Pageable pageable){
+        Page<Supplier> page = service.listPage(pageable);
+        return ResponseEntity.ok(page);
     }
 }

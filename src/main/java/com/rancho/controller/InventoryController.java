@@ -1,5 +1,8 @@
 package com.rancho.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.rancho.dto.InventoryDTO;
 import com.rancho.model.Inventory;
 import com.rancho.service.IInventoryService;
@@ -76,5 +79,11 @@ public class InventoryController {
         entityModel.add(link2.withRel("inventory-all-info"));
 
         return entityModel;
+    }
+
+    @GetMapping("/pageable")
+    public ResponseEntity<Page<Inventory>> listPageable(Pageable pageable){
+        Page<Inventory> page = service.listPage(pageable);
+        return ResponseEntity.ok(page);
     }
 }

@@ -1,5 +1,8 @@
 package com.rancho.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.rancho.dto.EmployeeDTO;
 import com.rancho.model.Employee;
 import com.rancho.service.IEmployeeService;
@@ -68,5 +71,11 @@ public class EmployeeController {
         entityModel.add(link2.withRel("employee-all-info"));
 
         return entityModel;
+    }
+
+    @GetMapping("/pageable")
+    public ResponseEntity<Page<Employee>> listPageable(Pageable pageable){
+        Page<Employee> page = service.listPage(pageable);
+        return ResponseEntity.ok(page);
     }
 }

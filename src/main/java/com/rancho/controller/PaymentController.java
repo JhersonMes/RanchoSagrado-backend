@@ -1,5 +1,8 @@
 package com.rancho.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.rancho.dto.PaymentDTO;
 import com.rancho.model.Payment;
 import com.rancho.service.IPaymentService;
@@ -76,5 +79,10 @@ public class PaymentController {
         entityModel.add(link2.withRel("payment-all-info"));
 
         return entityModel;
+    }
+    @GetMapping("/pageable")
+    public ResponseEntity<Page<Payment>> listPageable(Pageable pageable){
+        Page<Payment> page = service.listPage(pageable);
+        return ResponseEntity.ok(page);
     }
 }

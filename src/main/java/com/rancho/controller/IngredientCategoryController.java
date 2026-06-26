@@ -1,5 +1,8 @@
 package com.rancho.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.rancho.dto.IngredientCategoryDTO;
 import com.rancho.model.IngredientCategory;
 import com.rancho.service.IIngredientCategoryService;
@@ -68,5 +71,11 @@ public class IngredientCategoryController {
         entityModel.add(link2.withRel("ingredientcategory-all-info"));
 
         return entityModel;
+    }
+
+    @GetMapping("/pageable")
+    public ResponseEntity<Page<IngredientCategory>> listPageable(Pageable pageable){
+        Page<IngredientCategory> page = service.listPage(pageable);
+        return ResponseEntity.ok(page);
     }
 }

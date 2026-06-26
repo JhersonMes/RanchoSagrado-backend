@@ -1,5 +1,8 @@
 package com.rancho.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.rancho.dto.MenuDTO;
 import com.rancho.model.Menu;
 import com.rancho.service.IMenuService;
@@ -76,5 +79,11 @@ public class MenuController {
         entityModel.add(link2.withRel("menu-all-info"));
 
         return entityModel;
+    }
+
+    @GetMapping("/pageable")
+    public ResponseEntity<Page<Menu>> listPageable(Pageable pageable){
+        Page<Menu> page = service.listPage(pageable);
+        return ResponseEntity.ok(page);
     }
 }
