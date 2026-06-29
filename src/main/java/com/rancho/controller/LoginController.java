@@ -1,7 +1,10 @@
 package com.rancho.controller;
 
 import com.rancho.dto.UserDTO;
+import com.rancho.model.Role;
 import com.rancho.model.User;
+import com.rancho.repository.IRoleRepository;
+import com.rancho.repository.IUserRepository;
 import com.rancho.security.JwtRequest;
 import com.rancho.security.JwtResponse;
 import com.rancho.security.JwtTokenUtil;
@@ -26,7 +29,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,6 +37,8 @@ public class LoginController {
     private final JwtTokenUtil jwtTokenUtil;
     private final JwtUserDetailsService jwtUserDetailsService;
     private final IUserService userService;
+    private final IUserRepository userRepository;
+    private final IRoleRepository roleRepository;
     @Qualifier("userMapper")
     private final ModelMapper modelMapper;
 
@@ -56,6 +60,13 @@ public class LoginController {
     @PostMapping("/register")
     public ResponseEntity<UserDTO> register(@Valid @RequestBody UserDTO userDTO) throws Exception {
         User user = modelMapper.map(userDTO, User.class);
+
+        Role clientRole = roleRepository.findOneByName("Cliente");
+        if (clientRole == null) {
+            throw new IllegalStateException("El rol 'Cliente' no existe. Verifique los datos semilla.");
+        }
+        user.setRole(clientRole);
+
         User savedUser = userService.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(savedUser, UserDTO.class));
     }
@@ -87,8 +98,9 @@ public class LoginController {
     }
 
     @GetMapping("/auth/user")
-    public ResponseEntity<Map<String, String>> getUserInfo(){
+    public ResponseEntity<UserDTO> getUserInfo(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok(Map.of("username", username));
+        User user = userRepository.findOneByUsername(username);
+        return ResponseEntity.ok(modelMapper.map(user, UserDTO.class));
     }
 }
