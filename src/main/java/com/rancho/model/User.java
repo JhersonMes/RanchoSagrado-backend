@@ -31,12 +31,6 @@ public class User {
     @Column(nullable = false)
     private boolean enabled;
 
-    // Relación 1:1 con Empleado
-    @OneToOne
-    @JoinColumn(name = "id_employee", nullable = false,
-            foreignKey = @ForeignKey(name = "FK_USER_EMPLOYEE"))
-    private Employee employee;
-
     // CAMBIO: Ahora es ManyToOne (Muchos Usuarios tienen un mismo Rol)
     @ManyToOne
     @JoinColumn(name = "id_role", nullable = false,
