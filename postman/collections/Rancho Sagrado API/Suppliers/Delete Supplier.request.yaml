@@ -1,5 +1,0 @@
-$kind: http-request
-name: Delete Supplier
-method: DELETE
-url: '{{baseUrl}}/suppliers/{{supplierId}}'
-order: 5000

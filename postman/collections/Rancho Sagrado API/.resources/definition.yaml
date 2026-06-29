@@ -1,6 +1,0 @@
-$kind: collection
-name: Rancho Sagrado API
-description: REST API for Rancho Sagrado restaurant management system. Covers Categories, Clients, Employees, and Suppliers.
-variables:
-  - key: baseUrl
-    value: 'http://localhost:9090'

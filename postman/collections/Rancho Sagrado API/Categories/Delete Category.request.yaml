@@ -1,5 +1,0 @@
-$kind: http-request
-name: Delete Category
-method: DELETE
-url: '{{baseUrl}}/categories/{{categoryId}}'
-order: 5000

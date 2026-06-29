@@ -1,5 +1,0 @@
-$kind: http-request
-name: Get All Suppliers
-method: GET
-url: '{{baseUrl}}/suppliers'
-order: 1000
