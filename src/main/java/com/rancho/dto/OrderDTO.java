@@ -15,10 +15,6 @@ import jakarta.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDTO {
-
-    @NotNull(message = "El id del pedido es requerido")
-    private Integer idOrder;
-
     @NotNull(message = "La fecha del pedido es requerida")
     private LocalDateTime orderDate;
 
@@ -39,6 +35,7 @@ public class OrderDTO {
     private BigDecimal total;
 
     private ClientDTO client;
+    @NotNull(message = "El empleado es requerido")
     private EmployeeDTO employee;
     private RestaurantTableDTO restaurantTable;
 }

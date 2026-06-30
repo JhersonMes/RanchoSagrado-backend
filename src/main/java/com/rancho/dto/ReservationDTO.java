@@ -35,6 +35,8 @@ public class ReservationDTO {
     @Size(min = 2, max = 50, message = "Las notas deben tener entre 2 y 50 caracteres")
     private String notes;
 
+    @NotNull(message = "El cliente es requerido")
     private ClientDTO client;
+    @NotNull(message = "La mesa es requerida")
     private RestaurantTableDTO restaurantTable;
 }

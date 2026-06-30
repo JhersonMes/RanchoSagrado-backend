@@ -38,5 +38,6 @@ public class PaymentDTO {
     @Size(min = 2, max = 50, message = "El estado del pago debe tener entre 2 y 50 caracteres")
     private String status;
 
+    @NotNull(message = "El pedido es requerido")
     private OrderDTO order;
 }

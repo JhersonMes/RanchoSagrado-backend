@@ -66,5 +66,6 @@ public class PaymentReceiptDTO {
     @Size(min = 2, max = 50, message = "La direccion fiscal debe tener entre 2 y 50 caracteres")
     private String fiscalAddress;
 
+    @NotNull(message = "El pedido es requerido")
     private OrderDTO order;
 }

@@ -28,6 +28,8 @@ public class OrderDetailDTO {
     @Size(min = 2, max = 50, message = "Las notas deben tener entre 2 y 50 caracteres")
     private String notes;
 
+    @NotNull(message = "El pedido es requerido")
     private OrderDTO order;
+    @NotNull(message = "El producto es requerido")
     private ProductDTO product;
 }

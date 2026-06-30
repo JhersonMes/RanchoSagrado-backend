@@ -22,5 +22,6 @@ public class ProductCategoryDTO {
     @Size(min = 2, max = 50, message = "La descripcion de la categoria debe tener entre 2 y 50 caracteres")
     private String description;
 
+    @NotNull(message = "La carta es requerida")
     private MenuDTO menu;
 }

@@ -32,5 +32,6 @@ public class InventoryDTO {
     @Min(value = 0, message = "El stock máximo debe ser mayor o igual a 0")
     private BigDecimal maxStock;
 
+    @NotNull(message = "El ingrediente es requerido")
     private IngredientDTO ingredient;
 }

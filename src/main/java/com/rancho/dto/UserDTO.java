@@ -27,6 +27,5 @@ public class UserDTO {
 
     private boolean enabled;
 
-    private EmployeeDTO employee;
     private RoleDTO role;
 }

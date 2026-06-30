@@ -33,5 +33,6 @@ public class ProductDTO {
     @NotNull(message = "La disponibilidad es requerida")
     private boolean availability;
 
+    @NotNull(message = "La categoría del producto es requerida")
     private ProductCategoryDTO category;
 }

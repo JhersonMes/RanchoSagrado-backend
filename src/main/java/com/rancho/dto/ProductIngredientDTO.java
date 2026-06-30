@@ -28,6 +28,8 @@ public class ProductIngredientDTO {
     @Size(min = 2, max = 50, message = "Las observaciones deben tener entre 2 y 50 caracteres")
     private String observations;
 
+    @NotNull(message = "El producto es requerido")
     private ProductDTO product;
+    @NotNull(message = "El ingrediente es requerido")
     private IngredientDTO ingredient;
 }

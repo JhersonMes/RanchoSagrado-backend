@@ -35,5 +35,6 @@ public class IngredientDTO {
     @Min(value = 0, message = "El costo unitario debe ser mayor o igual a 0")
     private BigDecimal unitCost;
 
+    @NotNull(message = "La categoría del ingrediente es requerida")
     private IngredientCategoryDTO ingredientCategory;
 }
