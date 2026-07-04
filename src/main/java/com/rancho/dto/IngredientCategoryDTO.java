@@ -12,7 +12,6 @@ import jakarta.validation.constraints.Size;
 @AllArgsConstructor
 public class IngredientCategoryDTO {
 
-    @NotNull(message = "El id de la categoria es requerido")
     private Integer idCategory;
 
     @NotNull(message = "El nombre de la categoria es requerido")

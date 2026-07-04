@@ -24,8 +24,7 @@ public class OrderDetailDTO {
     @Min(value = 0, message = "El precio unitario debe ser mayor o igual a 0")
     private BigDecimal unitPrice;
 
-    @NotNull(message = "Las notas son requeridas")
-    @Size(min = 2, max = 50, message = "Las notas deben tener entre 2 y 50 caracteres")
+    @Size(max = 200, message = "Las notas deben tener como máximo 200 caracteres")
     private String notes;
 
     @NotNull(message = "El pedido es requerido")

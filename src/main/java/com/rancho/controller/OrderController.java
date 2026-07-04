@@ -41,10 +41,11 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> save(@Valid @RequestBody OrderDTO dto) throws Exception {
+    public ResponseEntity<OrderDTO> save(@Valid @RequestBody OrderDTO dto) throws Exception {
         Order obj = service.save(modelMapper.map(dto, Order.class));
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getIdOrder()).toUri();
-        return ResponseEntity.created(location).build();
+        // Devuelve el pedido creado (con su id) para que el frontend pueda registrar los detalles
+        return ResponseEntity.created(location).body(modelMapper.map(obj, OrderDTO.class));
     }
 
     @PostMapping("/batch")
@@ -57,7 +58,9 @@ public class OrderController {
 
     @PutMapping("/{id}")
     public ResponseEntity<OrderDTO> update(@PathVariable("id") Integer id, @RequestBody OrderDTO dto) throws Exception {
-        Order obj = service.update(modelMapper.map(dto, Order.class), id);
+        Order order = modelMapper.map(dto, Order.class);
+        order.setIdOrder(id); // Usa el id de la URL para actualizar y no crear un registro nuevo
+        Order obj = service.update(order, id);
         return ResponseEntity.ok(modelMapper.map(obj, OrderDTO.class));
     }
 

@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PaymentDTO {
 
-    @NotNull(message = "El id del pago es requerido")
     private Integer idPayment;
 
     @NotNull(message = "La fecha del pago es requerida")
@@ -30,8 +29,7 @@ public class PaymentDTO {
     @Size(min = 2, max = 50, message = "El metodo de pago debe tener entre 2 y 50 caracteres")
     private String paymentMethod;
 
-    @NotNull(message = "Los detalles de la tarjeta son requeridos")
-    @Size(min = 2, max = 50, message = "Los detalles de la tarjeta deben tener entre 2 y 50 caracteres")
+    @Size(max = 100, message = "Los detalles de la tarjeta deben tener como máximo 100 caracteres")
     private String cardDetails;
 
     @NotNull(message = "El estado del pago es requerido")

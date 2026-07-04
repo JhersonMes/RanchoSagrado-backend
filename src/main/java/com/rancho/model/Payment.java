@@ -30,8 +30,8 @@ public class Payment {
     @Column(nullable = false, length = 30)
     private String paymentMethod; // EFECTIVO, TARJETA, YAPE, PLIN
 
-    @Column(nullable = false, length = 100)
-    private String cardDetails;
+    @Column(length = 100)
+    private String cardDetails; // Opcional: solo aplica para pagos con tarjeta
 
     @Column(nullable = false, length = 20)
     private String status; // PAGADO, PENDIENTE, REEMBOLSADO

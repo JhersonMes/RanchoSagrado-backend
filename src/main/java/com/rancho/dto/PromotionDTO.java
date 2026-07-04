@@ -36,7 +36,7 @@ public class PromotionDTO {
     private LocalDate endDate;
 
     @NotNull(message = "El estado es requerido")
-    private boolean status;
+    private Boolean status;
 
     private List<ProductDTO> products;
 }

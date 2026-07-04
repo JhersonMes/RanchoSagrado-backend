@@ -13,7 +13,6 @@ import jakarta.validation.constraints.Size;
 @AllArgsConstructor
 public class ReservationDTO {
 
-    @NotNull(message = "El id de la reserva es requerido")
     private Integer idReservation;
 
     @NotNull(message = "La fecha de la reserva es requerida")
@@ -23,16 +22,12 @@ public class ReservationDTO {
     @Min(value = 0, message = "El numero de personas debe ser mayor o igual a 0")
     private Integer numberOfPeople;
 
-    @NotNull(message = "La ocasion especial es requerida")
-    @Size(min = 2, max = 50, message = "La ocasion especial debe tener entre 2 y 50 caracteres")
     private String specialOccasion;
 
     @NotNull(message = "El estado es requerido")
     @Size(min = 2, max = 50, message = "El estado debe tener entre 2 y 50 caracteres")
     private String status;
 
-    @NotNull(message = "Las notas son requeridas")
-    @Size(min = 2, max = 50, message = "Las notas deben tener entre 2 y 50 caracteres")
     private String notes;
 
     @NotNull(message = "El cliente es requerido")

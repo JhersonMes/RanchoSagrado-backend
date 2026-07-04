@@ -15,6 +15,8 @@ import jakarta.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDTO {
+    private Integer idOrder;
+
     @NotNull(message = "La fecha del pedido es requerida")
     private LocalDateTime orderDate;
 
@@ -22,8 +24,7 @@ public class OrderDTO {
     @Size(min = 2, max = 50, message = "El estado del pedido debe tener entre 2 y 50 caracteres")
     private String status;
 
-    @NotNull(message = "El detalle del pedido es requerido")
-    @Size(min = 2, max = 50, message = "El detalle del pedido debe tener entre 2 y 50 caracteres")
+    @Size(max = 255, message = "El detalle del pedido debe tener como máximo 255 caracteres")
     private String detail;
 
     @NotNull(message = "El subtotal del pedido es requerido")

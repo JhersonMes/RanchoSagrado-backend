@@ -31,7 +31,7 @@ public class ProductDTO {
     private BigDecimal price;
 
     @NotNull(message = "La disponibilidad es requerida")
-    private boolean availability;
+    private Boolean availability; // Wrapper: evita error de deserialización cuando el JSON omite el campo
 
     @NotNull(message = "La categoría del producto es requerida")
     private ProductCategoryDTO category;

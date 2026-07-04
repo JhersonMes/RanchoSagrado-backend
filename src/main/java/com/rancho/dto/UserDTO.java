@@ -25,7 +25,7 @@ public class UserDTO {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    private boolean enabled;
+    private Boolean enabled;
 
     private RoleDTO role;
 }

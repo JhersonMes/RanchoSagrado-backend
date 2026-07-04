@@ -37,6 +37,17 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    // Errores de reglas de negocio (ej. cobrar un pedido que no está LISTO)
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<CustomErrorTemplate> handleIllegalStateException(IllegalStateException ex, WebRequest request) {
+        CustomErrorTemplate error = new CustomErrorTemplate(
+                LocalDateTime.now(),
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
     @ExceptionHandler(ArithmeticException.class)
     public ResponseEntity<CustomErrorTemplate> handleArithmeticException(ArithmeticException ex, WebRequest request) {
         CustomErrorTemplate error = new CustomErrorTemplate(

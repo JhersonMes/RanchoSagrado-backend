@@ -57,7 +57,9 @@ public class PaymentController {
 
     @PutMapping("/{id}")
     public ResponseEntity<PaymentDTO> update(@PathVariable("id") Integer id, @RequestBody PaymentDTO dto) throws Exception {
-        Payment obj = service.update(modelMapper.map(dto, Payment.class), id);
+        Payment payment = modelMapper.map(dto, Payment.class);
+        payment.setIdPayment(id); // Usa el id de la URL para actualizar y no crear un registro nuevo
+        Payment obj = service.update(payment, id);
         return ResponseEntity.ok(modelMapper.map(obj, PaymentDTO.class));
     }
 
