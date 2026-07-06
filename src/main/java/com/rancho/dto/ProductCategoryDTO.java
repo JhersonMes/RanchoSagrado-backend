@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProductCategoryDTO {
 
-    @NotNull(message = "El id de la categoria es requerido")
+    // El id es autogenerado por la BD al crear; no se valida como NotNull.
     private Integer idProductCategory;
 
     @NotNull(message = "El nombre de la categoria es requerido")

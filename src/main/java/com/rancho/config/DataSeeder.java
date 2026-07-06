@@ -1,11 +1,19 @@
 package com.rancho.config;
 
+import com.rancho.model.Client;
 import com.rancho.model.Employee;
+import com.rancho.model.Menu;
+import com.rancho.model.Product;
+import com.rancho.model.ProductCategory;
 import com.rancho.model.RestaurantTable;
 import com.rancho.model.Role;
 import com.rancho.model.Shift;
 import com.rancho.model.User;
+import com.rancho.repository.IClientRepository;
 import com.rancho.repository.IEmployeeRepository;
+import com.rancho.repository.IMenuRepository;
+import com.rancho.repository.IProductCategoryRepository;
+import com.rancho.repository.IProductRepository;
 import com.rancho.repository.IRestaurantTableRepository;
 import com.rancho.repository.IRoleRepository;
 import com.rancho.repository.IShiftRepository;
@@ -15,6 +23,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -29,6 +39,10 @@ public class DataSeeder implements CommandLineRunner {
     private final IRestaurantTableRepository restaurantTableRepository;
     private final IEmployeeRepository employeeRepository;
     private final IShiftRepository shiftRepository;
+    private final IMenuRepository menuRepository;
+    private final IProductCategoryRepository productCategoryRepository;
+    private final IProductRepository productRepository;
+    private final IClientRepository clientRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -38,6 +52,7 @@ public class DataSeeder implements CommandLineRunner {
         seedRestaurantTables();
         seedShifts();
         seedEmployees();
+        seedMenuAndProducts();
     }
 
     private void seedRoles() {
@@ -139,5 +154,57 @@ public class DataSeeder implements CommandLineRunner {
             employee.setShifts(List.of(shift));
             employeeRepository.save(employee);
         }
+    }
+
+    // Carta base con categorías y productos para que el mesero pueda armar pedidos
+    private void seedMenuAndProducts() {
+        if (productRepository.count() > 0) return;
+
+        Menu menu = new Menu();
+        menu.setName("Carta Principal");
+        menu.setDishQuantity(12);
+        menu.setDescription("Carta principal del restaurante Rancho Sagrado");
+        menu.setPrice(new BigDecimal("0.00"));
+        menu = menuRepository.save(menu);
+
+        ProductCategory entradas = buildCategory("Entradas", "Piqueos y entradas para compartir", menu);
+        ProductCategory platosFuertes = buildCategory("Platos Fuertes", "Especialidades de la casa", menu);
+        ProductCategory bebidas = buildCategory("Bebidas", "Bebidas frías y calientes", menu);
+        ProductCategory postres = buildCategory("Postres", "Dulces tradicionales", menu);
+
+        productRepository.saveAll(List.of(
+                buildProduct("Tequeños de Queso", "Tequeños crocantes con guacamole", 10f, "15.00", entradas),
+                buildProduct("Anticuchos", "Brochetas de corazón a la parrilla", 15f, "22.00", entradas),
+                buildProduct("Papa a la Huancaína", "Papas bañadas en crema huancaína", 10f, "14.00", entradas),
+                buildProduct("Lomo Saltado", "Lomo fino salteado con papas y arroz", 20f, "35.00", platosFuertes),
+                buildProduct("Ají de Gallina", "Pollo deshilachado en crema de ají amarillo", 18f, "28.00", platosFuertes),
+                buildProduct("Parrilla Rancho", "Parrilla mixta de la casa para dos", 30f, "65.00", platosFuertes),
+                buildProduct("Trucha Frita", "Trucha fresca con ensalada y papas doradas", 20f, "30.00", platosFuertes),
+                buildProduct("Chicha Morada 1L", "Jarra de chicha morada natural", 5f, "12.00", bebidas),
+                buildProduct("Limonada 1L", "Jarra de limonada fresca", 5f, "10.00", bebidas),
+                buildProduct("Gaseosa Personal", "Botella personal 500ml", 2f, "5.00", bebidas),
+                buildProduct("Suspiro Limeño", "Clásico postre limeño", 8f, "12.00", postres),
+                buildProduct("Picarones", "Porción de picarones con miel de chancaca", 12f, "10.00", postres)
+        ));
+    }
+
+    private ProductCategory buildCategory(String name, String description, Menu menu) {
+        ProductCategory category = new ProductCategory();
+        category.setName(name);
+        category.setDescription(description);
+        category.setMenu(menu);
+        return productCategoryRepository.save(category);
+    }
+
+    private Product buildProduct(String name, String description, Float preparationTime,
+                                 String price, ProductCategory category) {
+        Product product = new Product();
+        product.setName(name);
+        product.setDescription(description);
+        product.setPreparationTime(preparationTime);
+        product.setPrice(new BigDecimal(price));
+        product.setAvailability(true);
+        product.setCategory(category);
+        return product;
     }
 }

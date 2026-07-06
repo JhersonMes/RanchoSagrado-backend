@@ -8,7 +8,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 @SpringBootApplication
 // Extendemos SpringBootServletInitializer para que Tomcat externo
 // pueda arrancar la aplicación (en lugar del Tomcat embebido)
-public class RanchoSagradoApplication extends SpringBootServletInitializer {
+public class    RanchoSagradoApplication extends SpringBootServletInitializer {
 
     // Le indica a Tomcat cuál es la clase principal de la aplicación
     @Override

@@ -16,7 +16,7 @@ import jakarta.validation.constraints.Size;
 @AllArgsConstructor
 public class PaymentReceiptDTO {
 
-    @NotNull(message = "El id del recibo es requerido")
+    // El id es autogenerado por la BD al crear; no se valida como NotNull.
     private Integer idReceipt;
 
     @NotNull(message = "El tipo de recibo es requerido")

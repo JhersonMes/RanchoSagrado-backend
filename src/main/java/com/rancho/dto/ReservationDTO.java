@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -16,10 +18,12 @@ public class ReservationDTO {
     private Integer idReservation;
 
     @NotNull(message = "La fecha de la reserva es requerida")
+    @Future(message = "La fecha de la reserva no puede ser una fecha pasada")
     private LocalDateTime reservationDate;
 
     @NotNull(message = "El numero de personas es requerido")
-    @Min(value = 0, message = "El numero de personas debe ser mayor o igual a 0")
+    @Min(value = 1, message = "El numero de personas debe ser al menos 1")
+    @Max(value = 10, message = "El numero de personas no puede ser mayor a 10")
     private Integer numberOfPeople;
 
     private String specialOccasion;

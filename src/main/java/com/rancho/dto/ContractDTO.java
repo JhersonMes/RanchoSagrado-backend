@@ -15,7 +15,7 @@ import jakarta.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ContractDTO {
-    @NotNull(message = "El id del contrato es requerido")
+    // El id es autogenerado por la BD al crear; no se valida como NotNull.
     private Integer idContract;
 
     @NotNull(message = "La fecha de inicio es requerida")

@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmployeeDTO {
-    @NotNull(message = "El id del empleado es requerido")
+    // El id es autogenerado por la BD al crear; no se valida como NotNull.
     private Integer idEmployee;
 
     @NotNull(message = "El nombre es requerido")

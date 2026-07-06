@@ -13,7 +13,7 @@ import jakarta.validation.constraints.Size;
 @AllArgsConstructor
 public class ProductIngredientDTO {
 
-    @NotNull(message = "El id del producto es requerido")
+    // El id es autogenerado por la BD al crear; no se valida como NotNull.
     private Integer idProductIngredient;
 
     @NotNull(message = "La cantidad es requerida")

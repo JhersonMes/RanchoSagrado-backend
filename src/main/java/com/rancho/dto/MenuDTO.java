@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MenuDTO {
 
-    @NotNull(message = "El id del menu es requerido")
+    // El id es autogenerado por la BD al crear; no se valida como NotNull.
     private Integer idMenu;
 
     @NotNull(message = "El nombre es requerido")
