@@ -26,7 +26,7 @@ public class Order {
     private LocalDateTime orderDate;
 
     @Column(name = "estado_pedido", nullable = false, length = 50)
-    private String status; // PENDIENTE, EN_PROCESO, LISTO, ENTREGADO, CANCELADO
+    private String status; // PENDIENTE, LISTO, PAGADO, CANCELADO
 
     @Column(name = "detalle_pedido", length = 255)
     private String detail;

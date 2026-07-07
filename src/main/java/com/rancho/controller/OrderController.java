@@ -70,6 +70,24 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Actualización parcial del estado del pedido (PATCH).
+     * El chef usa este endpoint para marcar un pedido como LISTO o CANCELADO
+     * sin necesidad de enviar toda la entidad.
+     */
+    @PatchMapping("/{id}")
+    public ResponseEntity<OrderDTO> patchStatus(
+            @PathVariable("id") Integer id,
+            @RequestBody java.util.Map<String, String> body) throws Exception {
+        Order order = service.findById(id);
+        String newStatus = body.get("status");
+        if (newStatus != null && !newStatus.isBlank()) {
+            order.setStatus(newStatus.toUpperCase());
+            order = service.update(order, id);
+        }
+        return ResponseEntity.ok(modelMapper.map(order, OrderDTO.class));
+    }
+
     @GetMapping("/hateoas/{id}")
     public EntityModel<OrderDTO> findByIdHateoas(@PathVariable("id") Integer id) throws Exception {
         Order obj = service.findById(id);
