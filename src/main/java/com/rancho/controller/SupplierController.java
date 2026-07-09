@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -41,6 +42,7 @@ public class SupplierController {
         return ResponseEntity.ok(modelMapper.map(obj, SupplierDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PostMapping
     public ResponseEntity<Void> save(@Valid @RequestBody SupplierDTO dto) throws Exception {
         Supplier obj = service.save(modelMapper.map(dto, Supplier.class));
@@ -48,6 +50,7 @@ public class SupplierController {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PostMapping("/batch")
     public ResponseEntity<List<SupplierDTO>> saveAll(@RequestBody List<SupplierDTO> dtos) throws Exception {
         List<Supplier> entities = dtos.stream().map(dto -> modelMapper.map(dto, Supplier.class)).toList();
@@ -56,12 +59,14 @@ public class SupplierController {
         return ResponseEntity.ok(savedDtos);
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PutMapping("/{id}")
     public ResponseEntity<SupplierDTO> update(@PathVariable("id") Integer id, @RequestBody SupplierDTO dto) throws Exception {
         Supplier obj = service.update(modelMapper.map(dto, Supplier.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, SupplierDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -38,6 +39,7 @@ public class RestaurantTableController {
         return ResponseEntity.ok(modelMapper.map(obj, RestaurantTableDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PostMapping
     public ResponseEntity<Void> save(@Valid @RequestBody RestaurantTableDTO dto) throws Exception {
         RestaurantTable obj = service.save(modelMapper.map(dto, RestaurantTable.class));
@@ -45,12 +47,14 @@ public class RestaurantTableController {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PutMapping("/{id}")
     public ResponseEntity<RestaurantTableDTO> update(@RequestBody RestaurantTableDTO dto, @PathVariable("id") Integer id) throws Exception {
         RestaurantTable obj = service.update(modelMapper.map(dto, RestaurantTable.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, RestaurantTableDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);

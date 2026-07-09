@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -40,6 +41,8 @@ public class OrderController {
         return ResponseEntity.ok(modelMapper.map(obj, OrderDTO.class));
     }
 
+    // El Mesero y el Cliente crean pedidos desde /pages/order/new; el Administrador puede hacerlo también.
+    @PreAuthorize("hasAnyAuthority('Administrador', 'Mesero', 'Cliente')")
     @PostMapping
     public ResponseEntity<OrderDTO> save(@Valid @RequestBody OrderDTO dto) throws Exception {
         Order obj = service.save(modelMapper.map(dto, Order.class));
@@ -48,6 +51,7 @@ public class OrderController {
         return ResponseEntity.created(location).body(modelMapper.map(obj, OrderDTO.class));
     }
 
+    @PreAuthorize("hasAnyAuthority('Administrador', 'Mesero', 'Cliente')")
     @PostMapping("/batch")
     public ResponseEntity<List<OrderDTO>> saveAll(@RequestBody List<OrderDTO> dtos) throws Exception {
         List<Order> orders = dtos.stream().map(dto -> modelMapper.map(dto, Order.class)).toList();
@@ -56,6 +60,8 @@ public class OrderController {
         return ResponseEntity.ok(savedDtos);
     }
 
+    // El Mesero edita/actualiza el estado del pedido desde la vista de pedidos.
+    @PreAuthorize("hasAnyAuthority('Administrador', 'Mesero')")
     @PutMapping("/{id}")
     public ResponseEntity<OrderDTO> update(@PathVariable("id") Integer id, @RequestBody OrderDTO dto) throws Exception {
         Order order = modelMapper.map(dto, Order.class);
@@ -64,6 +70,7 @@ public class OrderController {
         return ResponseEntity.ok(modelMapper.map(obj, OrderDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
@@ -75,6 +82,7 @@ public class OrderController {
      * El chef usa este endpoint para marcar un pedido como LISTO o CANCELADO
      * sin necesidad de enviar toda la entidad.
      */
+    @PreAuthorize("hasAnyAuthority('Administrador', 'Chef')")
     @PatchMapping("/{id}")
     public ResponseEntity<OrderDTO> patchStatus(
             @PathVariable("id") Integer id,

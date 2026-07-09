@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -38,6 +39,7 @@ public class ShiftController {
         return ResponseEntity.ok(modelMapper.map(obj, ShiftDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PostMapping
     public ResponseEntity<Void> save(@Valid @RequestBody ShiftDTO dto) throws Exception {
         Shift obj = service.save(modelMapper.map(dto, Shift.class));
@@ -45,12 +47,14 @@ public class ShiftController {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PutMapping("/{id}")
     public ResponseEntity<ShiftDTO> update(@RequestBody ShiftDTO dto, @PathVariable("id") Integer id) throws Exception {
         Shift obj = service.update(modelMapper.map(dto, Shift.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, ShiftDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);

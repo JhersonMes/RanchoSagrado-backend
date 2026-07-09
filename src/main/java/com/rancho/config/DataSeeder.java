@@ -1,6 +1,5 @@
 package com.rancho.config;
 
-import com.rancho.model.Client;
 import com.rancho.model.Employee;
 import com.rancho.model.Menu;
 import com.rancho.model.Product;
@@ -9,7 +8,6 @@ import com.rancho.model.RestaurantTable;
 import com.rancho.model.Role;
 import com.rancho.model.Shift;
 import com.rancho.model.User;
-import com.rancho.repository.IClientRepository;
 import com.rancho.repository.IEmployeeRepository;
 import com.rancho.repository.IMenuRepository;
 import com.rancho.repository.IProductCategoryRepository;
@@ -24,12 +22,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.text.Normalizer;
 import java.time.LocalTime;
 import java.util.List;
 
-// Inserta datos base (roles, usuarios, mesas, empleados) si las tablas están vacías,
-// para poder iniciar sesión y probar el sistema sin necesidad de un script SQL externo.
 @Component
 @RequiredArgsConstructor
 public class DataSeeder implements CommandLineRunner {
@@ -42,16 +38,15 @@ public class DataSeeder implements CommandLineRunner {
     private final IMenuRepository menuRepository;
     private final IProductCategoryRepository productCategoryRepository;
     private final IProductRepository productRepository;
-    private final IClientRepository clientRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
         seedRoles();
-        seedUsers();
+        seedBaseUsers();
         seedRestaurantTables();
         seedShifts();
-        seedEmployees();
+        seedStaff();
         seedMenuAndProducts();
     }
 
@@ -73,16 +68,16 @@ public class DataSeeder implements CommandLineRunner {
         return role;
     }
 
-    private void seedUsers() {
+    private void seedBaseUsers() {
         if (userRepository.count() > 0) return;
+
         createUser("admin", "admin@rancho.com", "Admin123*", "Administrador");
-        createUser("cajero", "cajero@rancho.com", "Cajero123*", "Cajero");
-        createUser("chef", "chef@rancho.com", "Chef123*", "Chef");
         createUser("mesero", "mesero@rancho.com", "Mesero123*", "Mesero");
-        createUser("cliente", "cliente@rancho.com", "Cliente123*", "Cliente");
+        createUser("chef", "chef@rancho.com", "Chef123*", "Chef");
+        createUser("cajero", "cajero@rancho.com", "Cajero123*", "Cajero");
     }
 
-    private void createUser(String username, String email, String rawPassword, String roleName) {
+    private User createUser(String username, String email, String rawPassword, String roleName) {
         Role role = roleRepository.findOneByName(roleName);
 
         User user = new User();
@@ -91,7 +86,7 @@ public class DataSeeder implements CommandLineRunner {
         user.setPassword(passwordEncoder.encode(rawPassword));
         user.setEnabled(true);
         user.setRole(role);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     private void seedRestaurantTables() {
@@ -124,7 +119,7 @@ public class DataSeeder implements CommandLineRunner {
         return shift;
     }
 
-    private void seedEmployees() {
+    private void seedStaff() {
         if (employeeRepository.count() > 0) return;
 
         String[][] data = {
@@ -132,9 +127,9 @@ public class DataSeeder implements CommandLineRunner {
                 {"María", "López", "Jr. Las Flores 45", "Mesero", "987654322", "ACTIVO", "10000002", "Mañana"},
                 {"Juan", "Pérez", "Calle Sol 78", "Mesero", "987654323", "ACTIVO", "10000003", "Tarde"},
                 {"Ana", "Torres", "Av. Central 12", "Cajero", "987654324", "ACTIVO", "10000004", "Tarde"},
-                {"Luis", "Fernández", "Jr. Norte 89", "Cocina", "987654325", "ACTIVO", "10000005", "Mañana"},
+                {"Luis", "Fernández", "Jr. Norte 89", "Chef", "987654325", "ACTIVO", "10000005", "Mañana"},
                 {"Rosa", "Mendoza", "Av. Sur 34", "Mesero", "987654326", "ACTIVO", "10000006", "Noche"},
-                {"Pedro", "Castro", "Calle Luna 56", "Cocina", "987654327", "ACTIVO", "10000007", "Tarde"},
+                {"Pedro", "Castro", "Calle Luna 56", "Chef", "987654327", "ACTIVO", "10000007", "Tarde"},
                 {"Lucía", "Vargas", "Jr. Estrella 67", "Cajero", "987654328", "ACTIVO", "10000008", "Mañana"},
                 {"Diego", "Rojas", "Av. Mar 90", "Mesero", "987654329", "INACTIVO", "10000009", "Noche"},
                 {"Sofía", "Cruz", "Calle Río 21", "Chef", "987654330", "ACTIVO", "10000010", "Tarde"},
@@ -142,21 +137,33 @@ public class DataSeeder implements CommandLineRunner {
 
         for (String[] d : data) {
             Shift shift = shiftRepository.findOneByName(d[7]);
+            String job = d[3];
 
             Employee employee = new Employee();
             employee.setName(d[0]);
             employee.setLastName(d[1]);
             employee.setAddress(d[2]);
-            employee.setJob(d[3]);
+            employee.setJob(job);
             employee.setPhone(d[4]);
             employee.setStatus(d[5]);
             employee.setDni(d[6]);
             employee.setShifts(List.of(shift));
+
+            String username = slug(d[0]) + "." + slug(d[1]);
+            User user = createUser(username, username + "@rancho.com", job + "123*", job);
+            employee.setUser(user);
+
             employeeRepository.save(employee);
         }
     }
 
-    // Carta base con categorías y productos para que el mesero pueda armar pedidos
+    private String slug(String value) {
+        String withoutAccents = Normalizer.normalize(value, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+        return withoutAccents.toLowerCase().replaceAll("[^a-z0-9]+", "");
+    }
+
+
     private void seedMenuAndProducts() {
         if (productRepository.count() > 0) return;
 

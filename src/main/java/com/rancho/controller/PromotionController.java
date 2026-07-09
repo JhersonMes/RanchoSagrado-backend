@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -38,6 +39,7 @@ public class PromotionController {
         return ResponseEntity.ok(modelMapper.map(obj, PromotionDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PostMapping
     public ResponseEntity<Void> save(@Valid @RequestBody PromotionDTO dto) throws Exception {
         Promotion obj = service.save(modelMapper.map(dto, Promotion.class));
@@ -45,6 +47,7 @@ public class PromotionController {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PostMapping("/batch")
     public ResponseEntity<List<PromotionDTO>> saveAll(@RequestBody List<PromotionDTO> dtos) throws Exception {
         List<Promotion> list = dtos.stream().map(dto -> modelMapper.map(dto, Promotion.class)).toList();
@@ -53,12 +56,14 @@ public class PromotionController {
         return ResponseEntity.ok(savedDtos);
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PutMapping("/{id}")
     public ResponseEntity<PromotionDTO> update(@RequestBody PromotionDTO dto, @PathVariable("id") Integer id) throws Exception {
         Promotion obj = service.update(modelMapper.map(dto, Promotion.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, PromotionDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);

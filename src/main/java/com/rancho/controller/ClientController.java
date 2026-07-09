@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -42,6 +43,7 @@ public class ClientController {
         return ResponseEntity.ok(modelMapper.map(obj, ClientDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PostMapping
     public ResponseEntity<Void> save(@Valid @RequestBody ClientDTO dto) throws Exception {
         Client obj = service.save(modelMapper.map(dto, Client.class));
@@ -52,6 +54,7 @@ public class ClientController {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PostMapping("/batch")
     public ResponseEntity<List<ClientDTO>> saveAll(@RequestBody List<ClientDTO> dtos) throws Exception {
         List<Client> clients = dtos.stream().map(dto -> modelMapper.map(dto, Client.class)).toList();
@@ -62,6 +65,7 @@ public class ClientController {
         return ResponseEntity.ok(savedDtos);
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PutMapping("/{id}")
     public ResponseEntity<ClientDTO> update(@PathVariable("id") Integer id, @RequestBody ClientDTO dto)
             throws Exception {
@@ -70,6 +74,7 @@ public class ClientController {
         return ResponseEntity.ok(modelMapper.map(obj, ClientDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);

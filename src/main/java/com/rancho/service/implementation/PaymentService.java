@@ -23,15 +23,13 @@ public class PaymentService extends GenericService<Payment, Integer> implements 
         return repo;
     }
 
-    // Regla de negocio: solo se cobran pedidos LISTO y, al quedar PAGADO el pago,
-    // el pedido pasa a estado PAGADO para que ya no figure como pendiente de cobro.
     @Override
     @Transactional
     public Payment save(Payment payment) throws Exception {
         Order order = findLinkedOrder(payment);
-        if (!"LISTO".equalsIgnoreCase(order.getStatus())) {
+        if (!"ENTREGADO".equalsIgnoreCase(order.getStatus())) {
             throw new IllegalStateException(
-                    "Solo se pueden cobrar pedidos en estado LISTO (estado actual: " + order.getStatus() + ")");
+                    "Solo se pueden cobrar pedidos en estado ENTREGADO (estado actual: " + order.getStatus() + ")");
         }
         Payment saved = repo.save(payment);
         markOrderAsPaidIfNeeded(payment, order);

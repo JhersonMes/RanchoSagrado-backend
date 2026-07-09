@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.rancho.model.ProductCategory;
@@ -42,6 +43,7 @@ public class ProductCategoryController {
         return ResponseEntity.ok(modelMapper.map(obj, ProductCategoryDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PostMapping
     public ResponseEntity<Void> save(@Valid @RequestBody ProductCategoryDTO dto) throws Exception {
         ProductCategory obj = service.save(modelMapper.map(dto, ProductCategory.class));
@@ -49,6 +51,7 @@ public class ProductCategoryController {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PostMapping("/batch")
     public ResponseEntity<List<ProductCategoryDTO>> saveAll(@RequestBody List<ProductCategoryDTO> dtos) throws Exception {
         List<ProductCategory> productCategories = dtos.stream().map(dto -> modelMapper.map(dto, ProductCategory.class)).toList();
@@ -58,6 +61,7 @@ public class ProductCategoryController {
         return ResponseEntity.ok(savedDtos);
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PutMapping("/{id}")
     public ResponseEntity<ProductCategoryDTO> update(@PathVariable("id") Integer id, @RequestBody ProductCategoryDTO dto) throws Exception {
         ProductCategory obj = service.update(modelMapper.map(dto, ProductCategory.class), id);
@@ -65,6 +69,7 @@ public class ProductCategoryController {
         return ResponseEntity.ok(modelMapper.map(obj, ProductCategoryDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);

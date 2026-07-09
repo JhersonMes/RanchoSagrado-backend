@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -40,6 +41,8 @@ public class PaymentController {
         return ResponseEntity.ok(modelMapper.map(obj, PaymentDTO.class));
     }
 
+    // El Cajero cobra los pedidos LISTO desde su dashboard.
+    @PreAuthorize("hasAnyAuthority('Administrador', 'Cajero')")
     @PostMapping
     public ResponseEntity<Void> save(@Valid @RequestBody PaymentDTO dto) throws Exception {
         Payment obj = service.save(modelMapper.map(dto, Payment.class));
@@ -47,6 +50,7 @@ public class PaymentController {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasAnyAuthority('Administrador', 'Cajero')")
     @PostMapping("/batch")
     public ResponseEntity<List<PaymentDTO>> saveAll(@RequestBody List<PaymentDTO> dtos) throws Exception {
         List<Payment> payments = dtos.stream().map(dto -> modelMapper.map(dto, Payment.class)).toList();
@@ -55,6 +59,7 @@ public class PaymentController {
         return ResponseEntity.ok(savedDtos);
     }
 
+    @PreAuthorize("hasAnyAuthority('Administrador', 'Cajero')")
     @PutMapping("/{id}")
     public ResponseEntity<PaymentDTO> update(@PathVariable("id") Integer id, @RequestBody PaymentDTO dto) throws Exception {
         Payment payment = modelMapper.map(dto, Payment.class);
@@ -63,6 +68,7 @@ public class PaymentController {
         return ResponseEntity.ok(modelMapper.map(obj, PaymentDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -39,6 +40,7 @@ public class ContractController {
         return ResponseEntity.ok(modelMapper.map(obj, ContractDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PostMapping
     public ResponseEntity<Void> save(@RequestBody ContractDTO dto) throws Exception {
         Contract obj = service.save(modelMapper.map(dto, Contract.class));
@@ -47,12 +49,14 @@ public class ContractController {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PutMapping("/{id}")
     public ResponseEntity<ContractDTO> update(@PathVariable Integer id, @RequestBody ContractDTO dto) throws Exception {
         Contract obj = service.update(modelMapper.map(dto, Contract.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, ContractDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) throws Exception {
         service.delete(id);

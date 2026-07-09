@@ -51,4 +51,12 @@ public class Employee {
             inverseForeignKey = @ForeignKey(name = "FK_SHIFT_EMPLOYEE")
     )
     private List<Shift> shifts;
+
+    // Cuenta de sistema del empleado (opcional): permite, por ejemplo, saber qué
+    // Employee corresponde al Mesero autenticado. No todo Employee tiene una cuenta,
+    // y no todo User es un Employee (p. ej. los Clientes), por eso la relación es
+    // opcional y vive del lado de Employee, no de User.
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_user", unique = true, foreignKey = @ForeignKey(name = "FK_EMPLOYEE_USER"))
+    private User user;
 }

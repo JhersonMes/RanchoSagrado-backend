@@ -32,4 +32,7 @@ public class EmployeeDTO {
     private String phone;
     private String status;
     private String dni;
+
+    // Cuenta de sistema vinculada a este empleado (si tiene). Ver Employee.user.
+    private UserDTO user;
 }

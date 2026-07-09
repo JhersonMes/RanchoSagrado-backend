@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -38,6 +39,8 @@ public class ReservationController {
         return ResponseEntity.ok(modelMapper.map(obj, ReservationDTO.class));
     }
 
+    // El Cliente reserva desde /pages/reservation/new; el Mesero también gestiona reservas.
+    @PreAuthorize("hasAnyAuthority('Administrador', 'Mesero', 'Cliente')")
     @PostMapping
     public ResponseEntity<Void> save(@Valid @RequestBody ReservationDTO dto) throws Exception {
         Reservation obj = service.save(modelMapper.map(dto, Reservation.class));
@@ -45,6 +48,7 @@ public class ReservationController {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasAnyAuthority('Administrador', 'Mesero', 'Cliente')")
     @PostMapping("/batch")
     public ResponseEntity<List<ReservationDTO>> saveAll(@RequestBody List<ReservationDTO> dtos) throws Exception {
         List<Reservation> list = dtos.stream().map(dto -> modelMapper.map(dto, Reservation.class)).toList();
@@ -53,12 +57,14 @@ public class ReservationController {
         return ResponseEntity.ok(savedDtos);
     }
 
+    @PreAuthorize("hasAnyAuthority('Administrador', 'Mesero', 'Cliente')")
     @PutMapping("/{id}")
     public ResponseEntity<ReservationDTO> update(@RequestBody ReservationDTO dto, @PathVariable("id") Integer id) throws Exception {
         Reservation obj = service.update(modelMapper.map(dto, Reservation.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, ReservationDTO.class));
     }
 
+    @PreAuthorize("hasAnyAuthority('Administrador', 'Mesero')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);

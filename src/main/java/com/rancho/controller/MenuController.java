@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -40,6 +41,7 @@ public class MenuController {
         return ResponseEntity.ok(modelMapper.map(obj, MenuDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PostMapping
     public ResponseEntity<Void> save(@Valid @RequestBody MenuDTO dto) throws Exception {
         Menu obj = service.save(modelMapper.map(dto, Menu.class));
@@ -47,6 +49,7 @@ public class MenuController {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PostMapping("/batch")
     public ResponseEntity<List<MenuDTO>> saveAll(@RequestBody List<MenuDTO> dtos) throws Exception {
         List<Menu> menus = dtos.stream().map(dto -> modelMapper.map(dto, Menu.class)).toList();
@@ -55,12 +58,14 @@ public class MenuController {
         return ResponseEntity.ok(savedDtos);
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PutMapping("/{id}")
     public ResponseEntity<MenuDTO> update(@PathVariable("id") Integer id, @RequestBody MenuDTO dto) throws Exception {
         Menu obj = service.update(modelMapper.map(dto, Menu.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, MenuDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -40,6 +41,7 @@ public class OrderDetailController {
         return ResponseEntity.ok(modelMapper.map(obj, OrderDetailDTO.class));
     }
 
+    @PreAuthorize("hasAnyAuthority('Administrador', 'Mesero', 'Cliente')")
     @PostMapping
     public ResponseEntity<Void> save(@Valid @RequestBody OrderDetailDTO dto) throws Exception {
         OrderDetail obj = service.save(modelMapper.map(dto, OrderDetail.class));
@@ -47,6 +49,7 @@ public class OrderDetailController {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasAnyAuthority('Administrador', 'Mesero', 'Cliente')")
     @PostMapping("/batch")
     public ResponseEntity<List<OrderDetailDTO>> saveAll(@RequestBody List<OrderDetailDTO> dtos) throws Exception {
         List<OrderDetail> details = dtos.stream().map(dto -> modelMapper.map(dto, OrderDetail.class)).toList();
@@ -55,12 +58,14 @@ public class OrderDetailController {
         return ResponseEntity.ok(savedDtos);
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PutMapping("/{id}")
     public ResponseEntity<OrderDetailDTO> update(@PathVariable("id") Integer id, @RequestBody OrderDetailDTO dto) throws Exception {
         OrderDetail obj = service.update(modelMapper.map(dto, OrderDetail.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, OrderDetailDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);

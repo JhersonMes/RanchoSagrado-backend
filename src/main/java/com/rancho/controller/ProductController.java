@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -38,6 +39,7 @@ public class ProductController {
         return ResponseEntity.ok(modelMapper.map(obj, ProductDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PostMapping
     public ResponseEntity<Void> save(@Valid @RequestBody ProductDTO dto) throws Exception {
         Product obj = service.save(modelMapper.map(dto, Product.class));
@@ -45,6 +47,7 @@ public class ProductController {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PostMapping("/batch")
     public ResponseEntity<List<ProductDTO>> saveAll(@RequestBody List<ProductDTO> dtos) throws Exception {
         List<Product> list = dtos.stream().map(dto -> modelMapper.map(dto, Product.class)).toList();
@@ -53,12 +56,14 @@ public class ProductController {
         return ResponseEntity.ok(savedDtos);
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @PutMapping("/{id}")
     public ResponseEntity<ProductDTO> update(@RequestBody ProductDTO dto, @PathVariable("id") Integer id) throws Exception {
         Product obj = service.update(modelMapper.map(dto, Product.class), id);
         return ResponseEntity.ok(modelMapper.map(obj, ProductDTO.class));
     }
 
+    @PreAuthorize("hasAuthority('Administrador')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
